@@ -1,0 +1,27 @@
+filebeat.registry:
+        path: "${STORAGE_FILEBEAT_REG_DIR}"
+
+path:
+    data: "${STORAGE_FILEBEAT_DIR}"
+
+filebeat.config.inputs:
+    enabled: true
+    path: "${IMAGE_LOGGING_DIR}/filebeat.d/*.yml"
+
+output.redis:
+    hosts: [ "${LOGGING_REDIS_HOST}:6379" ]
+    password: "${LOGGING_REDIS_PASSWORD}"
+    key: "filebeat"
+    db: 0
+    timeout: 5
+
+logging:
+    level: info
+    to_files: true
+    to_syslog: false
+
+    files:
+        path: "${STORAGE_LOGS_DIR}"
+        name: filebeat.log
+        rotateverybytes: 10485760 # 10MB
+        keepfiles: 2

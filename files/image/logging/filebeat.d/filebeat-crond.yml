@@ -1,0 +1,9 @@
+- type: log
+  paths:
+    - "${STORAGE_LOGS_DIR}/crond.log"
+  fields:
+    daemon: crond
+    image_name: "${IMAGE_NAME}"
+    image_version: "${IMAGE_VERSION}"
+    app_name: "${APP_NAME}"
+    app_version: "${APP_VERSION}"

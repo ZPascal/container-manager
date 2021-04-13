@@ -1,0 +1,84 @@
+#!/usr/bin/python3
+
+import importlib.util
+import os
+import sys
+import glob
+import re
+import subprocess
+
+# Import utils
+spec = importlib.util.spec_from_file_location(
+    "module.name", f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py"
+)
+utils = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(utils)
+
+
+def extract_env_vars() -> []:
+    matched_values = list()
+
+    file_read = open(f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env", "r")
+    lines_read = file_read.readlines()
+    pattern = "_DIR="
+
+    for line_local in lines_read:
+        if re.search(pattern, line_local):
+            matched_values.append(line_local)
+
+    file_read.close()
+
+    return matched_values
+
+
+sys.stdout.write(
+    "Replacing environment variables (directory definitions) in logrotate configuration.;"
+)
+
+sed_script_start = "sed -i"
+
+values = extract_env_vars()
+
+# Collect all logrotate config files
+logrotate_configs = glob.glob(
+    f"{utils.get_env_variable('IMAGE_LOGGING_DIR')}{os.sep}logrotate-*.conf"
+)
+logrotate_configs.extend(
+    sorted(
+        glob.glob(
+            f"{utils.get_env_variable('IMAGE_LOGGING_DIR')}{os.sep}logrotate.d{os.sep}logrotate-*.conf"
+        )
+    )
+)
+
+# Rename env variables to all native path entries inside all logrotate config files
+for line in values:
+    name = line.split("=")[0]
+    name = "\\${%s}" % name
+    value = line.split("=")[1].replace('"', "").replace("\n", "")
+
+    sed_script = f'{sed_script_start} -e "s|{name}|{value}|g"'
+
+    for file in logrotate_configs:
+        sed_script_local = f"{sed_script} {file}"
+        result = subprocess.run(
+            sed_script_local,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            shell=True,
+        )
+        if result.returncode != 0:
+            sys.stdout.write(
+                f"Error, please check the script: {sed_script_local}, ERR: {result.stdout};"
+            )
+            sys.exit(1)
+
+# Set logrotate crontab entries
+sys.stdout.write("Creating crontab entry for logrotate;")
+f = open(f"{utils.get_env_variable('IMAGE_CRON_DIR')}{os.sep}kubernetes", "a")
+f.write(
+    f"{utils.get_env_variable('IMAGE_LOGROTATE_CRON')} . "
+    f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env; /usr/sbin/logrotate -f -s /tmp/logrotate.status"
+    f"{utils.get_env_variable('IMAGE_LOGGING_DIR')}{os.sep}logrotate-global.conf"
+)
+f.close()

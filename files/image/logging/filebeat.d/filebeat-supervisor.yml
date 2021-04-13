@@ -1,0 +1,9 @@
+- type: log
+  paths:
+      - "${SUPERVISOR_LOGS_DIR}/*.log"
+  fields:
+      daemon: supervisor
+      image_name: "${IMAGE_NAME}"
+      image_version: "${IMAGE_VERSION}"
+      app_name: "${APP_NAME}"
+      app_version: "${APP_VERSION}"

@@ -1,0 +1,1 @@
+db.documents.insertOne({ name: "Test", test: [ "test1", "test2" ] })
