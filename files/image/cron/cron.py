@@ -10,27 +10,25 @@ import signal
 import os
 
 
-def parse_crontab(crontab_file):
+def _parse_crontab(crontab_file: str) -> list:
     logger = logging.getLogger("parser")
 
-    logger.info("Reading crontab from %s", crontab_file)
+    logger.info(f"Reading crontab from {crontab_file}")
 
     if not os.path.isfile(crontab_file):
-        logger.error("Crontab %s does not exist. Exiting!", crontab_file)
+        logger.error(f"Crontab {crontab_file} does not exist. Exiting!")
         sys.exit(1)
 
     crontab = open(crontab_file, "r")
-
-    lines = crontab.readlines()
-
+    lines: list = crontab.readlines()
     crontab.close()
 
-    logger.info("%s lines read from crontab %s", len(lines), crontab_file)
+    logger.info(f"{len(lines)} lines read from crontab {crontab_file}")
 
-    jobs = []
+    jobs: list = list()
 
     for i, line in enumerate(lines):
-        line = line.strip()
+        line: str = line.strip()
 
         if not line:
             continue
@@ -38,27 +36,24 @@ def parse_crontab(crontab_file):
         if line.startswith("#"):
             continue
 
-        logger.info("Parsing line %s", line)
+        logger.info(f"Parsing line {line}")
 
-        expression = line.split(" ", 5)
-        cron_expression = " ".join(expression[0:5])
+        expression: list = line.split(" ", 5)
+        cron_expression: str = " ".join(expression[0:5])
 
-        logger.info("Cron expression is %s", cron_expression)
+        logger.info(f"Cron expression is {cron_expression}")
 
         try:
             cron_entry = CronTab(cron_expression)
         except ValueError as e:
             logger.critical(
-                "Unable to parse crontab. Line %s: Illegal cron expression %s. Error message: %s",
-                i + 1,
-                cron_expression,
-                e,
+                f"Unable to parse crontab. Line {i + 1}: Illegal cron expression {cron_expression}. Error message: {e}"
             )
             sys.exit(1)
 
-        command = expression[5]
+        command: str = expression[5]
 
-        logger.info("Command is %s", command)
+        logger.info(f"Command is {command}")
 
         jobs.append([cron_entry, command])
 
@@ -71,20 +66,20 @@ def parse_crontab(crontab_file):
     return jobs
 
 
-def get_next_executions(jobs):
+def _get_next_executions(jobs: list):
     logger = logging.getLogger("next-exec")
 
-    scheduled_executions = tuple(
+    scheduled_executions: tuple = tuple(
         (x[1], int(x[0].next(default_utc=True)) + 1) for x in jobs
     )
 
     logger.debug(f"Next executions of scheduled are {scheduled_executions}")
 
-    next_exec_time = min(scheduled_executions, key=lambda x: x[1])[1]
+    next_exec_time: int = int(min(scheduled_executions, key=lambda x: x[1])[1])
 
     logger.debug(f"Next execution is in {next_exec_time} second(s)")
 
-    next_commands = [x[0] for x in scheduled_executions if x[1] == next_exec_time]
+    next_commands: list = [x[0] for x in scheduled_executions if x[1] == next_exec_time]
 
     logger.debug(
         f"Next commands to be executed  in {next_exec_time} are {next_commands}"
@@ -93,14 +88,13 @@ def get_next_executions(jobs):
     return next_exec_time, next_commands
 
 
-def loop(jobs):
+def _loop(jobs: list):
     logger = logging.getLogger("loop")
 
     logger.info("Entering main loop")
 
     while True:
-        next_exec_time, commands = get_next_executions(jobs)
-        sleep_time = int(next_exec_time)
+        sleep_time, commands = _get_next_executions(jobs)
 
         logger.debug(f"Sleeping for {sleep_time} second(s)")
 
@@ -112,42 +106,42 @@ def loop(jobs):
         time.sleep(sleep_time)
 
         for command in commands:
-            execute_command(command)
+            _execute_command(command)
 
 
-def execute_command(command):
+def _execute_command(command: str):
     logger = logging.getLogger("exec")
 
-    logger.info("Executing command %s", command)
+    logger.info(f"Executing command {command}")
 
-    process = subprocess.Popen(
+    result = subprocess.run(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
     )
-    output = process.communicate()
-    logger.info(f"Standard output: {output[0]}")
-    logger.info(f"Standard error: {output[1]}")
+    logger.info(f"Standard output: {result.stdout}")
+    logger.info(f"Standard error: {result.stderr}")
 
 
-def signal_handler():
+def _signal_handler():
     logger = logging.getLogger("signal")
     logger.info("Exiting")
     sys.exit(0)
 
 
 def main():
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, _signal_handler)
+    signal.signal(signal.SIGTERM, _signal_handler)
 
     parser = argparse.ArgumentParser(description="cron")
-    parser.add_argument("-c", "--crontab", required=True)
+    parser.add_argument("-c", "--crontab", required=True, type=str)
     logging_target = parser.add_mutually_exclusive_group(required=True)
-    logging_target.add_argument("-L", "--logfile")
+    logging_target.add_argument("-L", "--logfile", type=str)
     logging_target.add_argument("-C", "--console", action="store_true")
     parser.add_argument(
         "-l",
         "--loglevel",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="INFO",
+        type=str,
     )
 
     args = parser.parse_args()
@@ -172,9 +166,10 @@ def main():
 
     logger.info("Starting cron")
 
-    jobs = parse_crontab(args.crontab)
+    jobs: list = _parse_crontab(args.crontab)
 
-    loop(jobs)
+    _loop(jobs)
 
 
-main()
+if __name__ == "__main__":
+    main()

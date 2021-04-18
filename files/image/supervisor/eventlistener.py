@@ -1,81 +1,85 @@
 #!/usr/bin/python3
 
+import os
 import sys
 
 
-def write_file(filename, content):
+def _write_file(filename: str, content: str):
     f = open(filename, "w")
     f.write(content)
     f.close()
 
 
-def write_pid_file(pid_dir, process, pid):
-    write_file(pid_dir + "/supervisor." + process + ".pid", str(pid))
+def _write_pid_file(pid_dir: str, process: str, pid: int):
+    _write_file(f"{pid_dir}{os.sep}supervisor.{process}.pid", str(pid))
 
 
-def write_state_file(state_dir, process, state):
-    write_file(state_dir + "/supervisor." + process + ".state", state)
+def _write_state_file(state_dir: str, process: str, state: str):
+    _write_file(f"{state_dir}{os.sep}supervisor.{process}.state", state)
 
 
-def write_stdout(s):
-    # only eventlistener protocol messages may be sent to stdout
-    sys.stdout.write(s)
+def _write_stdout(message_stdout: str):
+    # Only eventlistener protocol messages may be sent to stdout
+    sys.stdout.write(message_stdout)
+    # Use the flush methode to clean the buffer and post ot to the console
     sys.stdout.flush()
 
 
-def write_stderr(s):
-    sys.stderr.write(s)
+def _write_stderr(message_stderr: str):
+    sys.stderr.write(message_stderr)
+    # Use the flush methode to clean the buffer and post ot to the console
     sys.stderr.flush()
 
 
 # Write state and the pid inside tmp files
 def main():
-    argc = len(sys.argv)
+    argc: int = len(sys.argv)
 
     if argc != 3:
-        write_stdout(
-            "Wrong number of arguments! Expected: "
-            + sys.argv[0]
-            + " <PROCESS_PID_DIR> <PROCESS_STATE_DIR>"
+        _write_stdout(
+            f"Wrong number of arguments! Expected: {sys.argv[0]} <PROCESS_PID_DIR> <PROCESS_STATE_DIR>"
         )
         sys.exit(1)
 
-    pid_dir = sys.argv[1]
-    state_dir = sys.argv[2]
+    pid_dir: str = sys.argv[1]
+    state_dir: str = sys.argv[2]
 
-    while 1:
+    while True:
         # transition from ACKNOWLEDGED to READY
-        write_stdout("READY\n")
+        _write_stdout("READY\n")
 
         # read header line and print it to stderr
-        line = sys.stdin.readline()
+        line: str = sys.stdin.readline()
 
         # read event payload and print it to stderr
-        headers = dict([x.split(":") for x in line.split()])
-        data_line = sys.stdin.read(int(headers["len"]))
-        data = dict([x.split(":") for x in data_line.split()])
+        headers_list: list = [x.split(":") for x in line.split()]
+        headers: dict = dict(headers_list)
 
-        process_name = data["processname"]
-        state = headers["eventname"].replace("PROCESS_STATE_", "")
+        data_line: str = sys.stdin.read(int(headers["len"]))
+        data_line_list: list = [x.split(":") for x in data_line.split()]
+        data: dict = dict(data_line_list)
+
+        process_name: str = data["processname"]
+        state: str = headers["eventname"].replace("PROCESS_STATE_", "")
 
         if "pid" in data:
-            pid = data["pid"]
+            pid: int = data["pid"]
         else:
-            pid = -1
+            pid: int = -1
 
-        write_stderr(line)
-        write_stderr(data_line)
-        write_stderr("\n")
+        _write_stderr(line)
+        _write_stderr(data_line)
+        _write_stderr("\n")
 
-        write_stderr(
-            "Process name: {}, State: {}, PID: {}\n".format(process_name, state, pid)
+        _write_stderr(
+            f"Process name: {process_name}, State: {state}, PID: {pid}\n"
         )
 
-        write_state_file(state_dir, process_name, state)
-        write_pid_file(pid_dir, process_name, pid)
+        _write_state_file(state_dir, process_name, state)
+        _write_pid_file(pid_dir, process_name, pid)
 
         # transition from READY to ACKNOWLEDGED
-        write_stdout("RESULT 2\nOK")
+        _write_stdout("RESULT 2\nOK")
 
 
 if __name__ == "__main__":
