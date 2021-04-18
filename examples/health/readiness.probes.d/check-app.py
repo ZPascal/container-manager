@@ -5,7 +5,9 @@ import os
 import sys
 import subprocess
 
-spec = importlib.util.spec_from_file_location("module.name", f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py")
+spec = importlib.util.spec_from_file_location(
+    "module.name", f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py"
+)
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
@@ -15,7 +17,9 @@ if result_local == 0:
     sys.stdout.write("Trying to call main page at localhost:27017/test;")
 
     command = ["echo", "db.runCommand('ping').ok", "|", "mongo", "localhost:27017/test"]
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    result = subprocess.run(
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
+    )
 
     if result.returncode != 0:
         sys.stdout.write("Main page didn't respond!;")

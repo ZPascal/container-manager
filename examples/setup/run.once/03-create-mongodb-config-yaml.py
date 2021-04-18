@@ -4,16 +4,25 @@ import yaml
 import importlib.util
 import os
 
-spec = importlib.util.spec_from_file_location("module.name", f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py")
+spec = importlib.util.spec_from_file_location(
+    "module.name", f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py"
+)
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
 dictionary = {
-    "storage": {"dbPath": f"{utils.get_env_variable('STORAGE_DATA_DIR')}{os.sep}db", "journal": {"enabled": True}},
-    "net": {"bindIp": f"{utils.get_env_variable('MONGO_INITDB_HOST')}",
-            "port": f"{utils.get_env_variable('MONGO_INITDB_PORT')}"},
-    "security": {"authorization": "enabled"}
+    "storage": {
+        "dbPath": f"{utils.get_env_variable('STORAGE_DATA_DIR')}{os.sep}db",
+        "journal": {"enabled": True},
+    },
+    "net": {
+        "bindIp": f"{utils.get_env_variable('MONGO_INITDB_HOST')}",
+        "port": f"{utils.get_env_variable('MONGO_INITDB_PORT')}",
+    },
+    "security": {"authorization": "enabled"},
 }
 
-f = open(f"{utils.get_env_variable('STORAGE_CONF_DIR')}{os.sep}mongodb-config.yaml", "w")
+f = open(
+    f"{utils.get_env_variable('STORAGE_CONF_DIR')}{os.sep}mongodb-config.yaml", "w"
+)
 f.write(yaml.dump(dictionary))

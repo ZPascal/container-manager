@@ -23,6 +23,22 @@ def write_log(log_level: str, logger: str, message: str):
     print(f"{time_stamp}\t{log_level}\t{logger} {message}")
 
 
+# Format the code, if theres any special log out e.g. exceptions inside the output stream
+def _log_preparation(result_str: str, script: str):
+    result_str_prep: list = (
+        result_str.replace("b'", "").replace("\\'", '"').replace("'", "").split("\\n")
+    )
+
+    for j in range(0, len(result_str_prep)):
+        if result_str_prep[j] != "":
+            write_log(
+                "error",
+                os.path.basename(__file__),
+                f"Error, please check the script: {script}, ERR: "
+                f"{str(result_str_prep[j]).strip()}",
+            )
+
+
 # Check if process is running
 def is_process_running(process_name: str):
     command = ["ps", "|", "grep", "-v", "grep", "|", "grep", process_name]
@@ -68,16 +84,16 @@ def get_env_variable(variable: str) -> str:
 
 
 # Execute a list of scripts and check if file permission is correct
-def execute_scripts(scripts: list, value: str):
+def execute_scripts(scripts: list, temp_dir_path: str = ""):
     for script in scripts:
         oct_perm = str(oct(os.stat(script).st_mode))[-3:]
         if int(oct_perm) >= 444:
-            if len(value) == 0:
+            if len(temp_dir_path) == 0:
                 message = f"* Running setup file {script}"
                 command = [f"{script}"]
             else:
-                message = f"* Running backup file {script} {value}"
-                command = [f"{script}", value]
+                message = f"* Running backup file {script} {temp_dir_path}"
+                command = [f"{script}", temp_dir_path]
 
             write_log("info", os.path.basename(__file__), message)
             result = subprocess.run(
@@ -86,38 +102,28 @@ def execute_scripts(scripts: list, value: str):
 
             result_str = str(result.stdout)
             if ";" in result_str:
-                for i in result_str.split(";"):
-                    if i != "'":
-                        value = i.replace("b'", "")
-                        if result.returncode != 0:
-                            write_log(
-                                "error",
-                                os.path.basename(__file__),
-                                f"Error, please check the script: {script}, ERR: {value}",
-                            )
-                            sys.exit(1)
-                        else:
-                            write_log("info", script.split(os.sep)[-1], value)
-            elif "Traceback" in result_str:
-                result_str_prep: list = (
-                    result_str.replace("b'", "")
-                    .replace("\\'", '"')
-                    .replace("'", "")
-                    .split("\\n")
-                )
+                result_str_prep: list = result_str.split(";")
                 for i in range(0, len(result_str_prep)):
-                    if result_str_prep[i] != "":
-                        write_log(
-                            "error",
-                            os.path.basename(__file__),
-                            f"Error, please check the script: {script}, ERR: {str(result_str_prep[i]).strip()}",
-                        )
+                    if result_str_prep[i] != "'":
+                        if result.returncode != 0:
+                            _log_preparation(result_str_prep[i], script)
+
+                            if len(result_str_prep) - 1 == i:
+                                sys.exit(1)
+                        else:
+                            write_log(
+                                "info",
+                                script.split(os.sep)[-1],
+                                result_str_prep[i].replace("b'", ""),
+                            )
+            elif "Traceback" in result_str:
+                _log_preparation(result_str, script)
                 sys.exit(1)
         else:
             write_log(
                 "error",
                 os.path.basename(__file__),
-                f"Wrong permissions. Please, upgrade the permissions higher as oct 444: {script}",
+                f"Wrong permissions. Please, upgrade the permissions higher than oct 444: {script}",
             )
 
 

@@ -5,7 +5,9 @@ import os
 import sys
 import subprocess
 
-spec = importlib.util.spec_from_file_location("module.name", f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py")
+spec = importlib.util.spec_from_file_location(
+    "module.name", f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py"
+)
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
@@ -14,8 +16,18 @@ result_local = utils.is_supervisor_process_running("exporter")
 if result_local == 0:
     sys.stdout.write("Trying to call main page at 0.0.0.0:9216/health;")
 
-    command = ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "0.0.0.0:9216/health"]
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    command = [
+        "curl",
+        "-s",
+        "-o",
+        "/dev/null",
+        "-w",
+        "%{http_code}",
+        "0.0.0.0:9216/health",
+    ]
+    result = subprocess.run(
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
+    )
 
     if result != 0:
         sys.stdout.write("Main page didn't respond!;")

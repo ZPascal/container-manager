@@ -34,7 +34,7 @@ utils.write_log("info", os.path.basename(__file__), "Executing RUN ALWAYS setup 
 run_always_scripts = sorted(
     glob.glob(f"{utils.get_env_variable('IMAGE_SETUP_RUNALWAYS_DIR')}{os.sep}*.py")
 )
-utils.execute_scripts(run_always_scripts, "")
+utils.execute_scripts(run_always_scripts)
 
 utils.write_log("info", os.path.basename(__file__), "[done]")
 
@@ -64,7 +64,7 @@ if os.path.isfile(image_setup_run_once_marker_file) is False:
     run_once_scripts = sorted(
         glob.glob(f"{utils.get_env_variable('IMAGE_SETUP_RUNONCE_DIR')}{os.sep}*.py")
     )
-    utils.execute_scripts(run_once_scripts, "")
+    utils.execute_scripts(run_once_scripts)
 
     f = open(image_setup_run_once_marker_file, "w")
     f.write(datetime.datetime.now().astimezone().strftime("%a %d. %b %H:%M:%S %Z %Y"))

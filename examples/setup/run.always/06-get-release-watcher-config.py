@@ -6,8 +6,9 @@ import subprocess
 import sys
 import shutil
 
-spec = importlib.util.spec_from_file_location("module.name",
-                                              f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py")
+spec = importlib.util.spec_from_file_location(
+    "module.name", f"{os.environ.get('IMAGE_BASE_DIR')}{os.sep}utils.py"
+)
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
@@ -38,7 +39,9 @@ try:
     ]
 
     result = subprocess.run(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
 
     if result.returncode != 0:
@@ -59,7 +62,10 @@ try:
     sys.stdout.write("Remove repo and git folder;")
     if os.path.exists(path_repo):
         shutil.rmtree(path_repo, ignore_errors=True)
-        shutil.rmtree(f"{utils.get_env_variable('STORAGE_CONF_DIR')}{os.sep}.git", ignore_errors=True)
+        shutil.rmtree(
+            f"{utils.get_env_variable('STORAGE_CONF_DIR')}{os.sep}.git",
+            ignore_errors=True,
+        )
 except Exception as e:
     sys.stdout.write(f"Can not remove the files and folders. Check the error: {e};")
     sys.exit(1)

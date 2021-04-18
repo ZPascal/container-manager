@@ -53,7 +53,7 @@ for script in image_health_liveness_scripts:
         utils.write_log(
             "error",
             os.path.basename(__file__),
-            f"Wrong permissions. Please, upgrade the permissions higher as oct 444: {script}",
+            f"Wrong permissions. Please, upgrade the permissions higher than oct 444: {script}",
         )
 
 if result_str == "ok":

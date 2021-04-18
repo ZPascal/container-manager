@@ -121,7 +121,7 @@ def restore_data(backup_file: str):
                 utils.write_log(
                     "error",
                     os.path.basename(__file__),
-                    f"Wrong permissions. Please, upgrade the permissions higher as oct 444: {script}",
+                    f"Wrong permissions. Please, upgrade the permissions higher than oct 444: {script}",
                 )
 
         utils.write_log("info", os.path.basename(__file__), "Cleaning up")
