@@ -13,6 +13,6 @@ spec.loader.exec_module(utils)
 result = utils.is_supervisor_process_running("exporter")
 
 if result != 0:
-    sys.stdout.write("Exporter is not running!;")
+    sys.stderr.write("Exporter is not running!;")
 
 sys.exit(result)

@@ -33,7 +33,7 @@ if os.path.exists(f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env"):
     )
 
     if rs.returncode is not None:
-        sys.stdout.write(f"Script error: {rs.returncode}")
+        sys.stderr.write(f"Script error: {rs.returncode}")
         sys.exit(1)
 
     file_1 = f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env"
@@ -45,7 +45,7 @@ if os.path.exists(f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env"):
     )
 
     if rs.returncode is not None:
-        sys.stdout.write("Old and new env file didn't include the sames values;")
+        sys.stderr.write("Old and new env file didn't include the sames values;")
 
         sys.exit(1)
     else:
@@ -58,7 +58,7 @@ if os.path.exists(f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env"):
         )
 
         if rs.returncode is not None:
-            sys.stdout.write(f"Script error: {rs.returncode}")
+            sys.stderr.write(f"Script error: {rs.returncode}")
             sys.exit(1)
 
         os.remove(f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env2")
@@ -73,5 +73,5 @@ else:
     )
 
     if rs.returncode is not None:
-        sys.stdout.write(f"Script error: {rs.returncode}")
+        sys.stderr.write(f"Script error: {rs.returncode}")
         sys.exit(1)

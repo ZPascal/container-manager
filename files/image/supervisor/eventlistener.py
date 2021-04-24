@@ -36,7 +36,7 @@ def main():
     argc: int = len(sys.argv)
 
     if argc != 3:
-        _write_stdout(
+        _write_stderr(
             f"Wrong number of arguments! Expected: {sys.argv[0]} <PROCESS_PID_DIR> <PROCESS_STATE_DIR>"
         )
         sys.exit(1)
@@ -71,9 +71,7 @@ def main():
         _write_stderr(data_line)
         _write_stderr("\n")
 
-        _write_stderr(
-            f"Process name: {process_name}, State: {state}, PID: {pid}\n"
-        )
+        _write_stderr(f"Process name: {process_name}, State: {state}, PID: {pid}\n")
 
         _write_state_file(state_dir, process_name, state)
         _write_pid_file(pid_dir, process_name, pid)

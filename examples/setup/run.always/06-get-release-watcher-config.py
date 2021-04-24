@@ -24,7 +24,7 @@ try:
         sys.stdout.write("Remove old config file if it exists;")
         os.remove(file_path)
 except Exception as e:
-    sys.stdout.write(f"Can not remove the config file. Check the error: {e};")
+    sys.stderr.write(f"Can not remove the config file. Check the error: {e};")
     sys.exit(1)
 
 try:
@@ -45,17 +45,17 @@ try:
     )
 
     if result.returncode != 0:
-        sys.stdout.write("Git clone didn't work;")
+        sys.stderr.write("Git clone didn't work;")
         sys.exit(1)
 except ValueError as e:
-    sys.stdout.write(f"Can not clone the repository. Check the error: {e};")
+    sys.stderr.write(f"Can not clone the repository. Check the error: {e};")
     sys.exit(1)
 
 try:
     sys.stdout.write("Move file;")
     shutil.move(f"{path_repo}{os.sep}releases.yml", file_path)
 except Exception as e:
-    sys.stdout.write(f"Can not move the file. Check the error: {e};")
+    sys.stderr.write(f"Can not move the file. Check the error: {e};")
     sys.exit(1)
 
 try:
@@ -67,5 +67,5 @@ try:
             ignore_errors=True,
         )
 except Exception as e:
-    sys.stdout.write(f"Can not remove the files and folders. Check the error: {e};")
+    sys.stderr.write(f"Can not remove the files and folders. Check the error: {e};")
     sys.exit(1)

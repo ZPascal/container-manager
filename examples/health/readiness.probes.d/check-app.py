@@ -22,16 +22,16 @@ if result_local == 0:
     )
 
     if result.returncode != 0:
-        sys.stdout.write("Main page didn't respond!;")
+        sys.stderr.write("Main page didn't respond!;")
         result_local = 1
     else:
         sys.stdout.write(f"Main page responded with HTTP Status {result.stdout}")
         if 200 <= int(result.stdout) <= 400:
             result_local = 0
         else:
-            sys.stdout.write("Main page could not be called.;")
+            sys.stderr.write("Main page could not be called.;")
             result_local = 1
 else:
-    sys.stdout.write("App is not running!;")
+    sys.stderr.write("App is not running!;")
 
 sys.exit(result_local)

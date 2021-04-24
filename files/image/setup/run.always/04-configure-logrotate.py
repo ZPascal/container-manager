@@ -68,7 +68,7 @@ for line in values:
             shell=True,
         )
         if result.returncode != 0:
-            sys.stdout.write(
+            sys.stderr.write(
                 f"Error, please check the script: {sed_script_local}, ERR: {result.stdout};"
             )
             sys.exit(1)

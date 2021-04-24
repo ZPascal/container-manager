@@ -28,7 +28,7 @@ if (
     )
 
     if ps.returncode is not None:
-        sys.stdout.write(
+        sys.stderr.write(
             f"Error, can't update the "
             f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}01-filebeat.conf;"
         )
@@ -45,7 +45,7 @@ else:
     )
 
     if ps.returncode is not None:
-        sys.stdout.write(
+        sys.stderr.write(
             f"Error, can't update the "
             f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}01-filebeat.conf;"
         )

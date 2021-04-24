@@ -21,7 +21,7 @@ if (
     result = utils.is_supervisor_process_running("crond")
 
     if result != 0:
-        sys.stdout.write("Cron is enabled but crond process is not running!;")
+        sys.stderr.write("Cron is enabled but crond process is not running!;")
         result_local = 1
     else:
         sys.stdout.write("Cron is running!;")
@@ -34,7 +34,7 @@ if (
     result = utils.is_supervisor_process_running("filebeat")
 
     if result != 0:
-        sys.stdout.write("Logging to Redis enabled but filebeat is not running!;")
+        sys.stderr.write("Logging to Redis enabled but filebeat is not running!;")
         result_local = 1
     else:
         sys.stdout.write("filebeat is running!;")
