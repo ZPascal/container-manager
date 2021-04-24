@@ -11,7 +11,7 @@ utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
 if len(utils.get_env_variable("RELEASE_WATCHER_GIT_TOKEN")) == 0:
-    sys.stdout.write("No secret for GiT_TOKEN provided! Exiting ...;")
+    sys.stderr.write("No secret for GiT_TOKEN provided! Exiting ...;")
     sys.exit(1)
 
 if len(utils.get_env_variable("SLACK_WEBHOCK_URL")) == 0:
