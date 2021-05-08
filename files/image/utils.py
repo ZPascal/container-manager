@@ -106,10 +106,10 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
                 for i in range(0, len(result_str_prep)):
                     if result_str_prep[i] != "'":
                         if result.returncode != 0:
-                            _log_preparation(result_str_prep[i], script)
+                            for j in range(i, len(result_str_prep)):
+                                _log_preparation(result_str_prep[j], script)
 
-                            if len(result_str_prep) - 1 == i:
-                                sys.exit(1)
+                            sys.exit(1)
                         else:
                             write_log(
                                 "info",
