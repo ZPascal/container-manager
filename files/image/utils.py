@@ -26,7 +26,8 @@ def write_log(log_level: str, logger: str, message: str):
 # Format the code, if theres any special log out e.g. exceptions inside the output stream
 def _log_preparation(result_str: str, script: str):
     result_str_prep: list = (
-        result_str.replace("b'", "").replace("\\'", '"').replace("'", "").split("\\n")
+        result_str.replace("b'", "").replace("b\"", "").replace("\\'", '"').replace("'", "").replace("\"", "").split(
+            "\\n")
     )
 
     for j in range(0, len(result_str_prep)):
