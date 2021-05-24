@@ -26,8 +26,13 @@ def write_log(log_level: str, logger: str, message: str):
 # Format the code, if theres any special log out e.g. exceptions inside the output stream
 def _log_preparation(result_str: str, script: str):
     result_str_prep: list = (
-        result_str.replace("b'", "").replace("b\"", "").replace("\\'", '"').replace("'", "").replace("\"", "").split(
-            "\\n")
+        result_str.replace("b'", "")
+        .replace('b"', "")
+        .replace("\\'", '"')
+        .replace("'", "")
+        .replace('"', "")
+        .replace("\t", "")
+        .split("\\n")
     )
 
     for j in range(0, len(result_str_prep)):
@@ -41,37 +46,62 @@ def _log_preparation(result_str: str, script: str):
 
 
 # Check if process is running
-def is_process_running(process_name: str):
+def is_process_running(process_name: str) -> bool:
     command = ["ps", "|", "grep", "-v", "grep", "|", "grep", process_name]
     result = subprocess.run(
         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
     )
 
-    return result.stdout
+    if len(result.stdout) == 0:
+        return False
+
+    return True
 
 
 # Check if supervisord process running
-def is_supervisor_process_running(process_name: str) -> int:
-    result = 1
+def is_supervisor_process_running(process_name: str) -> bool:
+    result = False
 
     f = open(f"/tmp/supervisor.{process_name}.state", "r")
 
     if f.readline() == "RUNNING":
-        result = 0
+        result = True
 
     return result
 
 
 # Check if backup is actual running
-def is_backup_running():
+def is_backup_running() -> bool:
     result = is_process_running("{backup.py}")
 
-    if len(result) != 0:
-        result = True
-    else:
-        result = False
-
     return result
+
+
+# Restart the process/ program
+def restart_process(process_name: str):
+    if len(process_name) != 0:
+        command = [
+            "supervisorctl",
+            "-s",
+            "unix:///tmp/supervisord.sock",
+            "restart",
+            process_name,
+        ]
+        result = subprocess.run(
+            command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
+        )
+
+        if result.returncode != 0:
+            return result.stdout
+
+        return None
+    else:
+        write_log(
+            "error",
+            os.path.basename(__file__),
+            "Error, please define a valid process name",
+        )
+        return "error"
 
 
 # Get the env variable by name
@@ -105,7 +135,7 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
             if ";" in result_str:
                 result_str_prep: list = result_str.split(";")
                 for i in range(0, len(result_str_prep)):
-                    if result_str_prep[i] != "'":
+                    if result_str_prep[i] != "'" and result_str_prep[i] != '"':
                         if result.returncode != 0:
                             for j in range(i, len(result_str_prep)):
                                 _log_preparation(result_str_prep[j], script)
@@ -115,7 +145,10 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
                             write_log(
                                 "info",
                                 script.split(os.sep)[-1],
-                                result_str_prep[i].replace("b'", ""),
+                                result_str_prep[i]
+                                .replace("b'", "")
+                                .replace("b", "")
+                                .replace('"', ""),
                             )
             elif "Traceback" in result_str:
                 _log_preparation(result_str, script)

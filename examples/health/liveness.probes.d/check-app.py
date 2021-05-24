@@ -14,5 +14,9 @@ result = utils.is_supervisor_process_running("app")
 
 if result != 0:
     sys.stderr.write("App is not running!;")
+    response = utils.restart_process("app")
+
+    if response is not None:
+        result = 1
 
 sys.exit(result)

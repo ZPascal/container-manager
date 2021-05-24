@@ -14,7 +14,7 @@ spec.loader.exec_module(utils)
 result_local = utils.is_supervisor_process_running("exporter")
 
 if result_local == 0:
-    sys.stdout.write("Trying to call main page at 0.0.0.0:9216/health;")
+    sys.stdout.write("Trying to call main page at localhost:9187/health;")
 
     command = [
         "curl",
@@ -23,7 +23,7 @@ if result_local == 0:
         "/dev/null",
         "-w",
         "%{http_code}",
-        "0.0.0.0:9216/health",
+        "localhost:9187/health",
     ]
     result = subprocess.run(
         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
@@ -31,14 +31,26 @@ if result_local == 0:
 
     if result != 0:
         sys.stderr.write("Main page didn't respond!;")
-        result_local = 1
+        if bool(utils.get_env_variable("IMAGE_HEALTH_LIVENESS_FORCE_REBOOT")):
+            response = utils.restart_process("exporter")
+
+            if response is not None:
+                result_local = 1
+        else:
+            result_local = 1
     else:
         sys.stdout.write(f"Main page responded with HTTP Status {result.stdout}")
         if 200 <= int(result.stdout) <= 400:
             result_local = 0
         else:
             sys.stderr.write("Main page could not be called.;")
-            result_local = 1
+            if bool(utils.get_env_variable("IMAGE_HEALTH_LIVENESS_FORCE_REBOOT")):
+                response = utils.restart_process("exporter")
+
+                if response is not None:
+                    result_local = 1
+            else:
+                result_local = 1
 else:
     sys.stderr.write("Exporter is not running!;")
 

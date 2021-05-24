@@ -14,5 +14,9 @@ result = utils.is_supervisor_process_running("exporter")
 
 if result != 0:
     sys.stderr.write("Exporter is not running!;")
+    response = utils.restart_process("exporter")
+
+    if response is not None:
+        result = 1
 
 sys.exit(result)
