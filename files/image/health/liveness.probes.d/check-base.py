@@ -11,7 +11,7 @@ spec = importlib.util.spec_from_file_location(
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
-result_local = 0
+result = 0
 
 if (
     len(utils.get_env_variable("IMAGE_CRON_ENABLED")) != 0
@@ -20,9 +20,14 @@ if (
     # Check if crond process is running
     result = utils.is_supervisor_process_running("crond")
 
-    if result != 0:
-        sys.stderr.write("Cron is enabled but crond process is not running!;")
-        result_local = 1
+    if result:
+        sys.stderr.write(
+            "Cron is enabled but crond process (cron) is not running! Restart crond;"
+        )
+        response = utils.restart_process("crond")
+
+        if response is not None:
+            result = 1
     else:
         sys.stdout.write("Cron is running!;")
 
@@ -33,10 +38,15 @@ if (
     # Check if filebeat process is running
     result = utils.is_supervisor_process_running("filebeat")
 
-    if result != 0:
-        sys.stderr.write("Logging to Redis enabled but filebeat is not running!;")
-        result_local = 1
+    if result:
+        sys.stderr.write(
+            "Logging to Redis enabled but filebeat is not running! Restart filebeat;"
+        )
+        response = utils.restart_process("filebeat")
+
+        if response is not None:
+            result = 1
     else:
         sys.stdout.write("filebeat is running!;")
 
-sys.exit(result_local)
+sys.exit(result)
