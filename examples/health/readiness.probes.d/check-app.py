@@ -52,7 +52,7 @@ if result_local == 0:
         else:
             result_local = 1
     else:
-        sys.stdout.write(f"Main command responded with error state")
+        sys.stdout.write("Main command responded with error state")
         result_local = 0
 else:
     sys.stderr.write("App is not running!;")
