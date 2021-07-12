@@ -77,8 +77,8 @@ for line in values:
 sys.stdout.write("Creating crontab entry for logrotate;")
 f = open(f"{utils.get_env_variable('IMAGE_CRON_DIR')}{os.sep}kubernetes", "a")
 f.write(
-    f"{utils.get_env_variable('IMAGE_LOGROTATE_CRON')} . "
+    f"{utils.get_env_variable('IMAGE_LOGROTATE_CRON')} "
     f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env; /usr/sbin/logrotate -f -s /tmp/logrotate.status"
-    f"{utils.get_env_variable('IMAGE_LOGGING_DIR')}{os.sep}logrotate-global.conf"
+    f"{utils.get_env_variable('IMAGE_LOGGING_DIR')}{os.sep}logrotate-global.conf\n"
 )
 f.close()
