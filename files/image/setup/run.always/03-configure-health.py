@@ -11,7 +11,7 @@ spec = importlib.util.spec_from_file_location(
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
-# Set backup crontab entries
+# Set health crontab entries
 if (
     len(utils.get_env_variable("HEALTH_LIVENESS_FORCE_REBOOT")) != 0
     and len(utils.get_env_variable("HEALTH_READINESS_CHECK_ENABLE")) != 0
