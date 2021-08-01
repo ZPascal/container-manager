@@ -71,3 +71,6 @@ RUN addgroup -S -g 500 kubernetes && \
     rm -rf /var/cache/apk/*
 
 ENTRYPOINT ["/run.py"]
+
+#Switch the user
+USER 500

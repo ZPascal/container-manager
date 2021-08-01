@@ -15,7 +15,7 @@ utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
 
-def extract_env_vars() -> []:
+def extract_dir_env_vars() -> []:
     matched_values = list()
 
     file_read = open(f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env", "r")
@@ -37,7 +37,7 @@ sys.stdout.write(
 
 sed_script_start = "sed -i"
 
-values = extract_env_vars()
+values = extract_dir_env_vars()
 
 # Collect all logrotate config files
 logrotate_configs = glob.glob(
@@ -59,6 +59,10 @@ for line in values:
 
     sed_script = f'{sed_script_start} -e "s|{name}|{value}|g"'
 
+    logging_dir = utils.get_env_variable("IMAGE_LOGGING_DIR")
+    os.chmod(logging_dir, 0o755)
+    os.chmod(f"{logging_dir}{os.sep}logrotate.d", 0o755)
+
     for file in logrotate_configs:
         sed_script_local = f"{sed_script} {file}"
         result = subprocess.run(
@@ -78,7 +82,7 @@ sys.stdout.write("Creating crontab entry for logrotate;")
 f = open(f"{utils.get_env_variable('IMAGE_CRON_DIR')}{os.sep}kubernetes", "a")
 f.write(
     f"{utils.get_env_variable('IMAGE_LOGROTATE_CRON')} "
-    f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env; /usr/sbin/logrotate -f -s /tmp/logrotate.status"
+    f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env; /usr/sbin/logrotate -f -s /tmp/logrotate.status "
     f"{utils.get_env_variable('IMAGE_LOGGING_DIR')}{os.sep}logrotate-global.conf\n"
 )
 f.close()
