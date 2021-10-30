@@ -1,11 +1,11 @@
-FROM alpine:3.12
+FROM alpine:3.14
 MAINTAINER Pascal Zimmermann <ZPascal>
 
 LABEL application="Alpine Linux" \
       description="Base Linux Container Image for Kubernetes" \
-      version="3.12" \
+      version="3.14" \
       lastModifiedBy="Pascal Zimmermann" \
-      lastModifiedOn="2021-04-13"
+      lastModifiedOn="2021-10-29"
 
 ENV IMAGE_NAME="" \
     IMAGE_VERSION="" \
