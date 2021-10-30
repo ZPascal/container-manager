@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Prepare the repository
-        run: addgroup --gid 500 kubernetes && adduser --uid 500 -G kubernetes -h /home/kubernetes kubernetes && chown 500:500 -R ./
+        run: sudo addgroup --gid 500 kubernetes && sudo adduser --uid 500 -G kubernetes -h /home/kubernetes kubernetes && sudo chown 500:500 -R ./
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile -t container-manager
