@@ -10,6 +10,6 @@ ADD ./test/integrationtest/image /image
 
 RUN pip install flask && chown -R kubernetes:kubernetes $IMAGE_BASE_DIR && chmod +x /image/app/integrationtest.py
 
-Expose 8080
+EXPOSE 8080
 
 USER 500
