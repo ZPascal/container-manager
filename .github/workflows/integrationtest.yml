@@ -9,29 +9,38 @@ on:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile -t container-manager
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile -t container-manager
 
-    - name: Build the Docker image (Integrationtest)
-      run: docker build . --file ./test/integrationtest/Dockerfile -t integrationtest
+      - name: Build the Docker image (Integrationtest)
+        run: docker build . --file ./test/integrationtest/Dockerfile -t integrationtest
 
-    - name: Create a local storage directory
-      run: mkdir ./storage &&
+  run:
+    needs: build
+    runs-on: ubuntu-latest
 
-    - name: Run the integrationtest container
-      run: docker run -p 8080:8080 -v /home/zpascal/storage/integrationtest:/storage -d integrationtest:latest
+    steps:
+      - name: Create a local storage directory
+        run: mkdir ./storage &&
 
-    - name: Test the integrationtest app
-      run: curl localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
+      - name: Run the integrationtest container
+        run: docker run -p 8080:8080 -v /home/zpascal/storage/integrationtest:/storage -d integrationtest:latest
 
-    - name: Restart the integrationtest app
-      run: docker exec -it $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
+  test:
+    needs: [build, run]
+    runs-on: ubuntu-latest
 
-    - name: Test the integrationtest app (again)
-      run: curl localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
+    steps:
+      - name: Test the integrationtest app
+        run: curl localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
+
+      - name: Restart the integrationtest app
+        run: docker exec -it $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
+
+      - name: Test the integrationtest app (again)
+        run: curl localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200

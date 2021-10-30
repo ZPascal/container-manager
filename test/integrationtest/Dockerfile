@@ -8,7 +8,7 @@ LABEL application="Integrationtest" \
 
 ADD ./test/integrationtest/image /image
 
-RUN pip install flask && chown -R kubernetes:kubernetes $IMAGE_BASE_DIR && chmod +x /image/app/integrationtest.py
+RUN pip install flask && ls -la /image/app && chown -R kubernetes:kubernetes $IMAGE_BASE_DIR && chmod +x /image/app/integrationtest.py
 
 EXPOSE 8080
 
