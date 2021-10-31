@@ -30,7 +30,7 @@ jobs:
         run: docker logs $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") >> /tmp/output.log && cat /tmp/output.log
 
       - name: Test
-        run: curl -v localhost:8080
+        run: curl -v localhost:8080/
 
       - name: Test the integrationtest app
         run: curl localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
