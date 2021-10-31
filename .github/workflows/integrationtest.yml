@@ -27,7 +27,7 @@ jobs:
         run: docker run -p 8080:8080 -v /home/zpascal/storage/integrationtest:/storage -d integrationtest:latest && sleep 10
 
       - name: Test
-        run: sudo netstat -tulpen | grep 8080
+        run: netstat -tulpen
 
       - name: Test the integrationtest app
         run: curl -v localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
