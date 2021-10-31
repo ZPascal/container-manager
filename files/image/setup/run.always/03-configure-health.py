@@ -13,24 +13,20 @@ spec.loader.exec_module(utils)
 
 # Set health crontab entries
 if (
-    len(utils.get_env_variable("IMAGE_HEALTH_READINESS_FORCE_REBOOT")) != 0
-    and len(utils.get_env_variable("IMAGE_HEALTH_LIVENESS_CHECK_ENABLED")) != 0
+        len(utils.get_env_variable("IMAGE_HEALTH_LIVENESS_CHECK_ENABLED")) != 0
+        and len(utils.get_env_variable("IMAGE_HEALTH_READINESS_FORCE_REBOOT")) != 0
 ):
-    os.chmod(utils.get_env_variable("IMAGE_CRON_DIR"), 0o775)
-
     f = open(f"{utils.get_env_variable('IMAGE_CRON_DIR')}{os.sep}kubernetes", "a")
     f.write(
         f"{utils.get_env_variable('IMAGE_HEALTH_CRON')} "
         f"{utils.get_env_variable('IMAGE_HEALTH_DIR')}{os.sep}check-liveness.py 2>&1 "
-        f"{utils.get_env_variable('IMAGE_HEALTH_LIVENESS_LOG')}\n"
+        f">{utils.get_env_variable('IMAGE_HEALTH_LIVENESS_LOG')}\n"
     )
     f.write(
         f"{utils.get_env_variable('IMAGE_HEALTH_CRON')} "
         f"{utils.get_env_variable('IMAGE_HEALTH_DIR')}{os.sep}check-readiness.py 2>&1 "
-        f"{utils.get_env_variable('IMAGE_HEALTH_READINESS_LOG')}\n"
+        f">{utils.get_env_variable('IMAGE_HEALTH_READINESS_LOG')}\n"
     )
     f.close()
-
-    os.chmod(utils.get_env_variable("IMAGE_CRON_DIR"), 0o555)
 else:
     sys.stdout.write("Health check disabled;")
