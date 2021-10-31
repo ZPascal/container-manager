@@ -23,6 +23,9 @@ jobs:
       - name: Create a local storage directory
         run: mkdir ./storage
 
+      - name: Test
+        run: chown 500:500 ./storage && ls -la
+
       - name: Run the integrationtest container
         run: docker run -p 8080:8080 -v storage:/storage integrationtest:latest
 
