@@ -21,10 +21,7 @@ jobs:
         run: docker build . --file ./test/integrationtest/Dockerfile -t integrationtest
 
       - name: Create a local storage directory
-        run: mkdir ./storage
-
-      - name: Test
-        run: sudo chown 500:500 ./storage && ls -la
+        run: mkdir ./storage && sudo chown 500:500 -R ./storage && ls -la ./storage
 
       - name: Run the integrationtest container
         run: docker run -p 8080:8080 -v storage:/storage integrationtest:latest
