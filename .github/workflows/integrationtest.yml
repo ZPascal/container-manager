@@ -26,9 +26,6 @@ jobs:
       - name: Run the integrationtest container
         run: docker run -p 8080:8080 -v storage:/storage integrationtest:latest
 
-      - name: Test
-        run: netstat -tulpen && ls -la
-
       - name: Test the integrationtest app
         run: curl -v localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
 
