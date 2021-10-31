@@ -27,16 +27,16 @@ jobs:
         run: docker run -p 8080:8080 -v /tmp/storage:/storage -d integrationtest:latest
 
       - name: Test (logs)
-        run: docker logs $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") >> /tmp/output.log
+        run: docker logs $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") > /tmp/output.log
 
       - name: Test
-        run:  cat /tmp/output.log && curl -v localhost:8080/
+        run:  cat /tmp/output.log
 
       - name: Test the integrationtest app
-        run: curl localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
+        run: curl -I localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
 
       - name: Restart the integrationtest app
         run: docker exec -it $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
 
       - name: Test the integrationtest app (again)
-        run: curl localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
+        run: curl -I localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
