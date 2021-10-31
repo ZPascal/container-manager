@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Prepare the repository
-        run: ls -la test/integrationtest
+        run: ls -la files && ls -la test/integrationtest/image
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile -t container-manager
