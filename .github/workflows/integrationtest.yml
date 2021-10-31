@@ -30,7 +30,7 @@ jobs:
         run: curl -I localhost:8080 2>/dev/null | head -n 1
 
       - name: Restart the integrationtest app
-        run: docker exec -it $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
+        run: id=$(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") && docker exec -it $id supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
 
       - name: Test the integrationtest app (again)
         run: curl -I localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
