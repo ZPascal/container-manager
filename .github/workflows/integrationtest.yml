@@ -21,10 +21,10 @@ jobs:
         run: docker build . --file ./test/integrationtest/Dockerfile -t integrationtest
 
       - name: Create a local storage directory
-        run: mkdir ./storage && sudo chown 500:500 -R ./storage && ls -la ./storage
+        run: mkdir /tmp/storage && sudo chown 500:500 -R /tmp/storage && ls -la /tmp/storage
 
       - name: Run the integrationtest container
-        run: docker run -p 8080:8080 -v storage:/storage integrationtest:latest
+        run: docker run -p 8080:8080 -v /tmp/storage:/storage integrationtest:latest
 
       - name: Test the integrationtest app
         run: curl -v localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
