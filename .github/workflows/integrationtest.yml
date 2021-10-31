@@ -27,7 +27,7 @@ jobs:
         run: docker run -p 8080:8080 -v /tmp/storage:/storage -d integrationtest:latest
 
       - name: Test (logs)
-        run: echo $(docker logs $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}"))
+        run: docker logs $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") >> /tmp/output.log && cat /tmp/output.log
 
       - name: Test
         run: curl -v localhost:8080
