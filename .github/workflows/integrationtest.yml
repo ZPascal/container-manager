@@ -14,9 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Prepare the repository
-        run: cat Dockerfile
-
       - name: Build the Docker image
         run: docker build . --file Dockerfile -t container-manager
 
@@ -24,7 +21,7 @@ jobs:
         run: docker build . --file ./test/integrationtest/Dockerfile -t integrationtest
 
       - name: Create a local storage directory
-        run: mkdir ./storage &&
+        run: mkdir ./storage
 
       - name: Run the integrationtest container
         run: docker run -p 8080:8080 -v /home/zpascal/storage/integrationtest:/storage -d integrationtest:latest
