@@ -27,7 +27,11 @@ jobs:
         run: docker run -p 8080:8080 -v /tmp/storage:/storage -d integrationtest:latest
 
       - name: Test the integrationtest app
-        run: "curl -I localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200"
+        run: |
+          curl -I localhost:8080 2>/dev/null
+          head -n 1
+          cut -d$' ' -f2
+          grep 200
 
       - name: Restart the integrationtest app
         run: id=$(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") && docker exec -it $id supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
