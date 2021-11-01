@@ -27,7 +27,7 @@ jobs:
         run: docker run -p 8080:8080 -v /tmp/storage:/storage -d integrationtest:latest
 
       - name: Test the integrationtest app
-        run: curl -I localhost:8080 2>/dev/null
+        run: curl -I localhost:8080
 
       - name: Test the integrationtest app
         run: curl -I localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200
