@@ -1,1 +1,0 @@
-curl -I localhost:8080 2>/dev/null | head -n 1 | cut -d$' ' -f2 | grep 200

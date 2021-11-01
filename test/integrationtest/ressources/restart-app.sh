@@ -1,1 +1,0 @@
-id=$(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") && docker exec -it $id supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
