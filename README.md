@@ -1,5 +1,7 @@
 # Container Manager
 
+[![Integrationtest](https://github.com/ZPascal/container-manager/actions/workflows/integrationtest.yml/badge.svg)](https://github.com/ZPascal/container-manager/actions/workflows/integrationtest.yml)
+
 ## Idea
 
 The finished solution should enable the complete lifecycle of an application to be covered and the application to be managed by means of a supervisor and corresponding preparatory steps to be carried out. Furthermore, one-time and regular operations are to be performed on the persistent storage. Another functionality is the backup and restore of the whole system. The system should be rounded off with the possibility of forwarding logs.
