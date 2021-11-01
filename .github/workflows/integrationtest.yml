@@ -33,7 +33,7 @@ jobs:
 
       - name: Restart the integrationtest app
         run: |
-          docker exec -it $(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
+          id=$(docker ps --filter "ancestor=integrationtest:latest" --format "{{.ID}}") && echo $id && docker exec -it ${id} supervisorctl -c /image/supervisor/global.conf -s unix:///tmp/supervisord.sock restart app
 
       - name: Test the integrationtest app (again)
         run: |
