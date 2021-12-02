@@ -119,11 +119,7 @@ If you would like to contribute a sample script [here](examples), have an improv
 
 ## Support
 
-If you need support or you encounter a bug, please don't hesitate to open an issue.
-
-## Next points
-
-- Thinking about what a test case scenario might look like
+If you need support, or you encounter a bug, please don't hesitate to open an issue.
 
 ## Donations
 

@@ -84,6 +84,8 @@ def restart_process(process_name: str):
             "supervisorctl",
             "-s",
             "unix:///tmp/supervisord.sock",
+            "-c",
+            f"{get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}global.conf",
             "restart",
             process_name,
         ]
