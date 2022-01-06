@@ -4,7 +4,6 @@ import importlib.util
 import os
 import sys
 import glob
-import re
 import subprocess
 
 # Import utils
@@ -14,30 +13,13 @@ spec = importlib.util.spec_from_file_location(
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
-
-def extract_dir_env_vars() -> []:
-    matched_values = list()
-
-    file_read = open(f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env", "r")
-    lines_read = file_read.readlines()
-    pattern = "_DIR="
-
-    for line_local in lines_read:
-        if re.search(pattern, line_local):
-            matched_values.append(line_local)
-
-    file_read.close()
-
-    return matched_values
-
-
 sys.stdout.write(
     "Replacing environment variables (directory definitions) in logrotate configuration.;"
 )
 
 sed_script_start = "sed -i"
 
-values = extract_dir_env_vars()
+values: list = utils.extract_dir_env_vars()
 
 # Collect all logrotate config files
 logrotate_configs = glob.glob(

@@ -8,7 +8,6 @@ import subprocess
 import sys
 import tarfile
 import tempfile
-from os import path
 
 # Import utils
 spec = importlib.util.spec_from_file_location(
@@ -34,12 +33,13 @@ def restore_data(backup_file: str):
             os.path.basename(__file__),
             "Backup is running. Restoring is not possible",
         )
+        sys.exit(1)
     else:
         utils.write_log("info", os.path.basename(__file__), "Starting restore")
 
         if (
             utils.get_env_variable("IMAGE_RESTORE_SCRIPTS_DIR") == ""
-            or path.exists(utils.get_env_variable("IMAGE_RESTORE_SCRIPTS_DIR")) is False
+            or os.path.exists(utils.get_env_variable("IMAGE_RESTORE_SCRIPTS_DIR")) is False
         ):
             utils.write_log(
                 "error",
@@ -95,8 +95,8 @@ def restore_data(backup_file: str):
         )
 
         for script in restore_scripts:
-            oct_perm = str(oct(os.stat(script).st_mode))[-3:]
-            if int(oct_perm) >= 444:
+            oct_perm: str = str(oct(os.stat(script).st_mode))[-3:]
+            if int(oct_perm) >= 544:
                 utils.write_log(
                     "info",
                     os.path.basename(__file__),
@@ -117,12 +117,14 @@ def restore_data(backup_file: str):
                         os.path.basename(__file__),
                         f"Error, please check the script: {script}, ERR: {result.stdout}",
                     )
+                    sys.exit(1)
             else:
                 utils.write_log(
                     "error",
                     os.path.basename(__file__),
-                    f"Wrong permissions. Please, upgrade the permissions higher than oct 444: {script}",
+                    f"Wrong permissions. Please, upgrade the permissions higher than oct 544: {script}",
                 )
+                sys.exit(1)
 
         utils.write_log("info", os.path.basename(__file__), "Cleaning up")
 
@@ -131,3 +133,4 @@ def restore_data(backup_file: str):
             utils.write_log("info", os.path.basename(__file__), "Restore done")
         else:
             utils.write_log("error", os.path.basename(__file__), "Temp path not exists")
+            sys.exit(1)

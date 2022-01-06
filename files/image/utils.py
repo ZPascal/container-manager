@@ -4,6 +4,7 @@ import datetime
 import os
 import subprocess
 import sys
+import re
 
 
 # Central logger
@@ -45,12 +46,12 @@ def _log_preparation(result_str: str, script: str):
 
 # Check if process is running
 def is_process_running(process_name: str) -> bool:
-    command = ["ps", "|", "grep", "-v", "grep", "|", "grep", process_name]
-    result = subprocess.run(
+    command: str = f"ps | grep -v grep | grep {process_name}"
+    result_stdout, result_stderr = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
-    )
+    ).communicate()
 
-    if len(result.stdout) == 0:
+    if len(result_stdout) == 0:
         return False
 
     return True
@@ -65,12 +66,14 @@ def is_supervisor_process_running(process_name: str) -> bool:
     if f.readline() == "RUNNING":
         result = True
 
+    f.close()
+
     return result
 
 
 # Check if backup is actual running
 def is_backup_running() -> bool:
-    result = is_process_running("{backup.py}")
+    result: bool = is_process_running("{backup.py}")
 
     return result
 
@@ -117,8 +120,8 @@ def get_env_variable(variable: str) -> str:
 # Execute a list of scripts and check if file permission is correct
 def execute_scripts(scripts: list, temp_dir_path: str = ""):
     for script in scripts:
-        oct_perm = str(oct(os.stat(script).st_mode))[-3:]
-        if int(oct_perm) >= 444:
+        oct_perm: str = str(oct(os.stat(script).st_mode))[-3:]
+        if int(oct_perm) >= 544:
             if len(temp_dir_path) == 0:
                 message = f"* Running setup file {script}"
                 command = [f"{script}"]
@@ -131,7 +134,7 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
                 command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
 
-            result_str = result.stdout.decode("utf-8")
+            result_str: str = result.stdout.decode("utf-8")
             if ";" in result_str:
                 result_str_prep: list = result_str.split(";")
                 for i in range(0, len(result_str_prep)):
@@ -157,8 +160,9 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
             write_log(
                 "error",
                 os.path.basename(__file__),
-                f"Wrong permissions. Please, upgrade the permissions higher than oct 444: {script}",
+                f"Wrong permissions. Please, upgrade the permissions higher than oct 544: {script}",
             )
+            sys.exit(1)
 
 
 # Sets the permissions recursive
@@ -175,3 +179,20 @@ def set_permissions_recursive(path: str, mode: int):
         for file in [os.path.join(root, f) for f in files]:
             if "__pycache__" not in file:
                 os.chmod(file, mode)
+
+
+# Extract the dirs from the env file
+def extract_dir_env_vars() -> list:
+    matched_values: list = list()
+
+    file_read = open(f"{get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env", "r")
+    lines_read = file_read.readlines()
+    pattern = "_DIR="
+
+    for line_local in lines_read:
+        if re.search(pattern, line_local):
+            matched_values.append(line_local)
+
+    file_read.close()
+
+    return matched_values
