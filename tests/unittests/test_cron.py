@@ -1,13 +1,13 @@
-import logging
 import os
 import sys
-import io
 from unittest import TestCase, main
 from unittest.mock import MagicMock, patch, call, mock_open
 
+from utils import Utils
+
 
 def _extract_crontab_path() -> str:
-    pwd: str = os.getcwd()
+    pwd: str = Utils._get_path_name()
     base_dir: str = os.path.dirname(os.path.dirname(pwd))
     cron_dir: str = f"{base_dir}{os.sep}files{os.sep}image{os.sep}cron"
     return cron_dir

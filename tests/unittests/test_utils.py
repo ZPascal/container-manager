@@ -3,6 +3,7 @@ import os
 from unittest import TestCase, main
 from unittest.mock import MagicMock, patch, call, mock_open
 
+from utils import Utils
 from files.image import utils
 
 
@@ -89,7 +90,7 @@ class UtilsTestCase(TestCase):
             utils.execute_scripts([MagicMock(), MagicMock()], "test")
 
     def test_execute_scripts_executed_script_wrong_file_permissions(self):
-        test_file: str = f"{os.getcwd()}{os.sep}resources{os.sep}test.py"
+        test_file: str = f"{Utils._get_path_name()}{os.sep}resources{os.sep}test.py"
         os.chmod(test_file, 0o444)
 
         with self.assertRaises(SystemExit):
@@ -109,7 +110,7 @@ class UtilsTestCase(TestCase):
         self.assertEqual(None, utils.execute_scripts([MagicMock(), MagicMock()]))
 
     def test_set_permissions_recursive(self):
-        test_folder: str = f"{os.getcwd()}{os.sep}resources{os.sep}test"
+        test_folder: str = f"{Utils._get_path_name()}{os.sep}resources{os.sep}test"
         utils.set_permissions_recursive(test_folder, 0o544)
 
         self.assertEqual(544, int(str(oct(os.stat(f"{test_folder}{os.sep}test.py").st_mode))[-3:]))

@@ -9,6 +9,8 @@ import sys
 import signal
 import os
 
+# TODO Add doc strings
+
 
 def _parse_crontab(crontab_file: str) -> list:
     logger = logging.getLogger("parser")

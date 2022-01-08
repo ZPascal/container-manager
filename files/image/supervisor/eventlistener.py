@@ -3,6 +3,8 @@
 import os
 import sys
 
+# TODO Add doc strings
+
 
 def _write_file(filename: str, content: str):
     f = open(filename, "w")

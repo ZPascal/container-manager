@@ -6,6 +6,8 @@ import subprocess
 import sys
 import re
 
+# TODO Add doc strings
+
 
 # Central logger
 def write_log(log_level: str, logger: str, message: str):

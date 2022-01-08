@@ -4,7 +4,9 @@ import tarfile
 from unittest import TestCase, main
 from unittest.mock import MagicMock, patch
 
-os.environ["IMAGE_BASE_DIR"] = f"{os.path.dirname(os.path.dirname(os.getcwd()))}/files/image"
+from utils import Utils
+
+os.environ["IMAGE_BASE_DIR"] = f"{os.path.dirname(os.path.dirname(Utils._get_path_name()))}/files/image"
 
 from files.image.restore import restore  # noqa: F401
 
