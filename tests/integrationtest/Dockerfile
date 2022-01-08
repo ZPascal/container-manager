@@ -6,7 +6,7 @@ LABEL application="Integrationtest" \
       lastModifiedBy="Pascal Zimmermann" \
       lastModifiedOn="2021-10-29"
 
-ADD ./test/integrationtest/image /image
+ADD ./tests/integrationtest/image /image
 
 RUN pip install flask && chown -R kubernetes:kubernetes $IMAGE_BASE_DIR && chmod +x /image/app/integrationtest.py
 
