@@ -116,7 +116,7 @@ class UtilsTestCase(TestCase):
         self.assertEqual(544, int(str(oct(os.stat(f"{test_folder}{os.sep}test.py").st_mode))[-3:]))
         self.assertEqual(544, int(str(oct(os.stat(f"{test_folder}{os.sep}test{os.sep}test.py").st_mode))[-3:]))
 
-    @patch("os.environ", {"IMAGE_CONFIG_DIR": f"{os.getcwd()}{os.sep}resources"})
+    @patch("os.environ", {"IMAGE_CONFIG_DIR": f"{Utils._get_path_name()}{os.sep}resources"})
     def test_extract_dir_env_vars(self):
         self.assertEqual(["TEST_DIR=test\n", "TEST1_DIR=test\n"], utils.extract_dir_env_vars())
 
