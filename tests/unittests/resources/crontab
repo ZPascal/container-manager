@@ -1,0 +1,4 @@
+2 1 * * * /image/config/env; /image/backup/backup.py 2>&1 >/storage/logs/backup.log
+*/5 * * * * /image/health/check-liveness.py 2>&1 >/storage/logs/liveness.log
+*/5 * * * * /image/health/check-readiness.py 2>&1 >/storage/logs/readiness.log
+32 4 * * * /image/config/env; /usr/sbin/logrotate -f -s /tmp/logrotate.status /image/logging/logrotate-global.conf

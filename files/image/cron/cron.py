@@ -88,12 +88,27 @@ def _get_next_executions(jobs: list):
     return next_exec_time, next_commands
 
 
-def _loop(jobs: list):
+def _loop(jobs: list, test_mode: bool = False):
     logger = logging.getLogger("loop")
 
     logger.info("Entering main loop")
 
-    while True:
+    if test_mode is False:
+        while True:
+            sleep_time, commands = _get_next_executions(jobs)
+
+            logger.debug(f"Sleeping for {sleep_time} second(s)")
+
+            if sleep_time <= 1:
+                logger.debug("Sleep time <= 1 second, ignoring.")
+                time.sleep(1)
+                continue
+
+            time.sleep(sleep_time)
+
+            for command in commands:
+                _execute_command(command)
+    else:
         sleep_time, commands = _get_next_executions(jobs)
 
         logger.debug(f"Sleeping for {sleep_time} second(s)")
@@ -101,7 +116,6 @@ def _loop(jobs: list):
         if sleep_time <= 1:
             logger.debug("Sleep time <= 1 second, ignoring.")
             time.sleep(1)
-            continue
 
         time.sleep(sleep_time)
 
@@ -117,6 +131,7 @@ def _execute_command(command: str):
     result = subprocess.run(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
     )
+
     logger.info(f"Standard output: {result.stdout}")
     logger.info(f"Standard error: {result.stderr}")
 
