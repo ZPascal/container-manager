@@ -2,14 +2,13 @@ import io
 from pathlib import Path
 import os
 import shutil
-from unittest import TestCase, main
-from unittest.mock import MagicMock, patch, call, mock_open
+from unittest import TestCase
+from unittest.mock import MagicMock, patch, mock_open
 
 from files.image.supervisor import eventlistener
 
 
 class EventListenerTestCase(TestCase):
-
     @staticmethod
     def assertIsFile(path):
         if not Path(path).resolve().is_file():

@@ -6,13 +6,14 @@ from unittest.mock import MagicMock, patch
 
 from utils import Utils
 
-os.environ["IMAGE_BASE_DIR"] = f"{os.path.dirname(os.path.dirname(Utils._get_path_name()))}/files/image"
+os.environ[
+    "IMAGE_BASE_DIR"
+] = f"{os.path.dirname(os.path.dirname(Utils._get_path_name()))}/files/image"
 
-from files.image.restore import restore  # noqa: F401
+from files.image.restore import restore  # noqa: F402
 
 
 class RestoreTestCase(TestCase):
-
     def test_restore_data_no_backup_file(self):
         with self.assertRaises(SystemExit):
             restore.restore_data("")
@@ -48,7 +49,9 @@ class RestoreTestCase(TestCase):
     @patch("tarfile.open", MagicMock())
     @patch("os.path.exists")
     @patch("os.environ", {"IMAGE_RESTORE_SCRIPTS_DIR": "test"})
-    def test_restore_data_backup_is_not_running_valid_tar_file(self, path_exists_mock, glob_mock, stat_mock):
+    def test_restore_data_backup_is_not_running_valid_tar_file(
+        self, path_exists_mock, glob_mock, stat_mock
+    ):
         path_exists_mock.return_value = True
         glob_mock.return_value = ["test"]
         stat_mock("test").st_mode = 0o544
@@ -61,9 +64,9 @@ class RestoreTestCase(TestCase):
     @patch("tarfile.open", MagicMock())
     @patch("os.path.exists")
     @patch("os.environ", {"IMAGE_RESTORE_SCRIPTS_DIR": "test"})
-    def test_restore_data_backup_is_not_running_valid_tar_file_not_the_right_script_permission(self,
-                                                                                               path_exists_mock,
-                                                                                               glob_mock, stat_mock):
+    def test_restore_data_backup_is_not_running_valid_tar_file_not_the_right_script_permission(
+        self, path_exists_mock, glob_mock, stat_mock
+    ):
         path_exists_mock.return_value = True
         glob_mock.return_value = ["test"]
         stat_mock("test").st_mode = 0o444
@@ -78,7 +81,9 @@ class RestoreTestCase(TestCase):
     @patch("tarfile.open", MagicMock())
     @patch("os.path.exists")
     @patch("os.environ", {"IMAGE_RESTORE_SCRIPTS_DIR": "test"})
-    def test_restore_data_backup_is_not_running_valid_tar_file_subprocess_successful(self, path_exists_mock, glob_mock, stat_mock, subprocess_run_mock, rmdir_mock):
+    def test_restore_data_backup_is_not_running_valid_tar_file_subprocess_successful(
+        self, path_exists_mock, glob_mock, stat_mock, subprocess_run_mock, rmdir_mock
+    ):
         path_exists_mock.return_value = True
         glob_mock.return_value = ["test"]
         stat_mock("test").st_mode = 0o544
@@ -93,9 +98,9 @@ class RestoreTestCase(TestCase):
     @patch("tarfile.open", MagicMock())
     @patch("os.path.exists")
     @patch("os.environ", {"IMAGE_RESTORE_SCRIPTS_DIR": "test"})
-    def test_restore_data_backup_is_not_running_valid_tar_file_subprocess_successful_tmp_dir_not_exists(self, path_exists_mock,
-                                                                                     glob_mock, stat_mock,
-                                                                                     subprocess_run_mock):
+    def test_restore_data_backup_is_not_running_valid_tar_file_subprocess_tmp_dir_not_exists(
+        self, path_exists_mock, glob_mock, stat_mock, subprocess_run_mock
+    ):
         path_exists_mock.return_value = [True, False]
         glob_mock.return_value = ["test"]
         stat_mock("test").st_mode = 0o544

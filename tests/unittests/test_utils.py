@@ -10,14 +10,21 @@ from files.image import utils
 
 
 class UtilsTestCase(TestCase):
-
     @patch("files.image.utils.write_log")
     def test_log_preparation(self, write_log_mock):
         result_str: str = "result\nresult"
         script: str = "script"
         utils._log_preparation(result_str, script)
-        self.assertEqual([call("error", "utils.py", "Error, please check the script: script, ERR: result\nresult")],
-                         write_log_mock.mock_calls)
+        self.assertEqual(
+            [
+                call(
+                    "error",
+                    "utils.py",
+                    "Error, please check the script: script, ERR: result\nresult",
+                )
+            ],
+            write_log_mock.mock_calls,
+        )
 
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_write_log_error(self, print_mock):
@@ -78,12 +85,14 @@ class UtilsTestCase(TestCase):
     @patch("subprocess.run")
     def test_execute_scripts_no_temp_dir_path(self, subprocess_run_mock):
         subprocess_run_mock.return_value.stdout = b"test"
-        self.assertEqual(None,  utils.execute_scripts([MagicMock(), MagicMock()]))
+        self.assertEqual(None, utils.execute_scripts([MagicMock(), MagicMock()]))
 
     @patch("subprocess.run")
     def test_execute_scripts_temp_dir_path(self, subprocess_run_mock):
         subprocess_run_mock.return_value.stdout = b"test"
-        self.assertEqual(None, utils.execute_scripts([MagicMock(), MagicMock()], "test"))
+        self.assertEqual(
+            None, utils.execute_scripts([MagicMock(), MagicMock()], "test")
+        )
 
     @patch("subprocess.run")
     def test_execute_scripts_temp_dir_path_traceback_error(self, subprocess_run_mock):
@@ -112,23 +121,49 @@ class UtilsTestCase(TestCase):
         self.assertEqual(None, utils.execute_scripts([MagicMock(), MagicMock()]))
 
     def test_set_permissions_recursive(self):
-        source_test_folder: str = f"{Utils._get_path_name()}{os.sep}resources{os.sep}test"
-        destination_test_folder: str = f"{tempfile.gettempdir()}{os.sep}resources{os.sep}test"
+        source_test_folder: str = (
+            f"{Utils._get_path_name()}{os.sep}resources{os.sep}test"
+        )
+        destination_test_folder: str = (
+            f"{tempfile.gettempdir()}{os.sep}resources{os.sep}test"
+        )
 
         shutil.copytree(source_test_folder, destination_test_folder)
 
         utils.set_permissions_recursive(destination_test_folder, 0o544)
 
-        self.assertEqual(544, int(str(oct(os.stat(f"{destination_test_folder}{os.sep}test.py").st_mode))[-3:]))
-        self.assertEqual(544, int(str(oct(os.stat(f"{destination_test_folder}{os.sep}test{os.sep}test.py").st_mode))[-3:]))
+        self.assertEqual(
+            544,
+            int(
+                str(oct(os.stat(f"{destination_test_folder}{os.sep}test.py").st_mode))[
+                    -3:
+                ]
+            ),
+        )
+        self.assertEqual(
+            544,
+            int(
+                str(
+                    oct(
+                        os.stat(
+                            f"{destination_test_folder}{os.sep}test{os.sep}test.py"
+                        ).st_mode
+                    )
+                )[-3:]
+            ),
+        )
 
         os.chmod(destination_test_folder, 0o755)
         utils.set_permissions_recursive(destination_test_folder, 0o755)
         shutil.rmtree(destination_test_folder)
 
-    @patch("os.environ", {"IMAGE_CONFIG_DIR": f"{Utils._get_path_name()}{os.sep}resources"})
+    @patch(
+        "os.environ", {"IMAGE_CONFIG_DIR": f"{Utils._get_path_name()}{os.sep}resources"}
+    )
     def test_extract_dir_env_vars(self):
-        self.assertEqual(["TEST_DIR=test\n", "TEST1_DIR=test\n"], utils.extract_dir_env_vars())
+        self.assertEqual(
+            ["TEST_DIR=test\n", "TEST1_DIR=test\n"], utils.extract_dir_env_vars()
+        )
 
     def test_extract_dir_env_vars_no_file(self):
         with self.assertRaises(FileNotFoundError):
