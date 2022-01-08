@@ -41,22 +41,21 @@ if liveness_check_enabled:
                 command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
             )
 
-            result_str = str(result.stdout)
+            result_str = result.stdout.decode("utf-8")
             if ";" in result_str:
                 for i in result_str.split(";"):
                     if i != "'":
-                        value = i.replace("b'", "")
                         if result.returncode != 0:
                             result_str = "error"
                             utils.write_log(
                                 "error",
                                 os.path.basename(__file__),
                                 f"Liveness health check {script} exited with code {result.returncode}! "
-                                f"ERR: {value}",
+                                f"ERR: {i}",
                             )
                         else:
                             result_str = "ok"
-                            utils.write_log("info", script.split(os.sep)[-1], value)
+                            utils.write_log("info", script.split(os.sep)[-1], i)
 
         else:
             utils.write_log(

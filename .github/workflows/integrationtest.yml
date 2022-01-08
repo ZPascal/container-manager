@@ -18,7 +18,7 @@ jobs:
         run: docker build . --file Dockerfile -t container-manager
 
       - name: Build the Docker image (Integrationtest)
-        run: docker build . --file ./test/integrationtest/Dockerfile -t integrationtest
+        run: docker build . --file ./tests/integrationtest/Dockerfile -t integrationtest
 
       - name: Create a local storage directory
         run: mkdir /tmp/storage && sudo chown 500:500 -R /tmp/storage

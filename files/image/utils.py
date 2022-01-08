@@ -23,12 +23,10 @@ def write_log(log_level: str, logger: str, message: str):
     print(f"{time_stamp}\t{log_level}\t{logger} {message}")
 
 
-# Format the code, if theres any special log out e.g. exceptions inside the output stream
+# Format the code, if there's any special log out e.g. exceptions inside the output stream
 def _log_preparation(result_str: str, script: str):
     result_str_prep: list = (
-        result_str.replace("b'", "")
-        .replace('b"', "")
-        .replace("\\'", '"')
+        result_str.replace("\\'", '"')
         .replace("'", "")
         .replace('"', "")
         .replace("\t", "")
@@ -133,7 +131,7 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
                 command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
 
-            result_str = str(result.stdout)
+            result_str = result.stdout.decode("utf-8")
             if ";" in result_str:
                 result_str_prep: list = result_str.split(";")
                 for i in range(0, len(result_str_prep)):
