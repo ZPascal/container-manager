@@ -21,15 +21,15 @@ from files.image.cron import cron  # noqa: F401
 class CronTestCase(TestCase):
 
     def test_parse_crontab(self):
-        self.assertEqual(4, len(cron._parse_crontab(f"{os.getcwd()}{os.sep}resources{os.sep}crontab")))
+        self.assertEqual(4, len(cron._parse_crontab(f"{Utils._get_path_name()}{os.sep}resources{os.sep}crontab")))
 
     def test_parse_crontab_no_valid_file(self):
         with self.assertRaises(SystemExit):
-            cron._parse_crontab(f"{os.getcwd()}{os.sep}resources{os.sep}crontab1")
+            cron._parse_crontab(f"{Utils._get_path_name()}{os.sep}resources{os.sep}crontab1")
 
     def test_parse_crontab_crontab_no_valid_lines(self):
         with self.assertRaises(SystemExit):
-            cron._parse_crontab(f"{os.getcwd()}{os.sep}resources{os.sep}crontab_error")
+            cron._parse_crontab(f"{Utils._get_path_name()}{os.sep}resources{os.sep}crontab_error")
 
     def test_get_next_executions_empty_list(self):
         with self.assertRaises(ValueError):
