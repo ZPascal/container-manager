@@ -1,5 +1,7 @@
 import io
 import os
+import shutil
+import tempfile
 from unittest import TestCase, main
 from unittest.mock import MagicMock, patch, call, mock_open
 
@@ -110,11 +112,19 @@ class UtilsTestCase(TestCase):
         self.assertEqual(None, utils.execute_scripts([MagicMock(), MagicMock()]))
 
     def test_set_permissions_recursive(self):
-        test_folder: str = f"{Utils._get_path_name()}{os.sep}resources{os.sep}test"
-        utils.set_permissions_recursive(test_folder, 0o544)
+        source_test_folder: str = f"{Utils._get_path_name()}{os.sep}resources{os.sep}test"
+        destination_test_folder: str = f"{tempfile.gettempdir()}{os.sep}resources{os.sep}test"
 
-        self.assertEqual(544, int(str(oct(os.stat(f"{test_folder}{os.sep}test.py").st_mode))[-3:]))
-        self.assertEqual(544, int(str(oct(os.stat(f"{test_folder}{os.sep}test{os.sep}test.py").st_mode))[-3:]))
+        shutil.copytree(source_test_folder, destination_test_folder)
+
+        utils.set_permissions_recursive(destination_test_folder, 0o544)
+
+        self.assertEqual(544, int(str(oct(os.stat(f"{destination_test_folder}{os.sep}test.py").st_mode))[-3:]))
+        self.assertEqual(544, int(str(oct(os.stat(f"{destination_test_folder}{os.sep}test{os.sep}test.py").st_mode))[-3:]))
+
+        os.chmod(destination_test_folder, 0o755)
+        utils.set_permissions_recursive(destination_test_folder, 0o755)
+        shutil.rmtree(destination_test_folder)
 
     @patch("os.environ", {"IMAGE_CONFIG_DIR": f"{Utils._get_path_name()}{os.sep}resources"})
     def test_extract_dir_env_vars(self):
