@@ -10,7 +10,7 @@ os.environ[
     "IMAGE_BASE_DIR"
 ] = f"{os.path.dirname(os.path.dirname(Utils._get_path_name()))}/files/image"
 
-from files.image.restore import restore  # noqa: F402
+from files.image.restore import restore  # noqa: E402
 
 
 class RestoreTestCase(TestCase):

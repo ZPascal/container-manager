@@ -65,7 +65,7 @@ if sys.version_info >= (3, 0):
     _number_types = (int, float)
     xrange = range
 else:
-    _number_types = (int, long, float)
+    _number_types = (int, float)
 
 MINUTE = timedelta(minutes=1)
 HOUR = timedelta(hours=1)
@@ -318,11 +318,11 @@ class _Matcher(object):
             _assert(
                 (entry[1:].isdigit() and 0 <= int(es) <= 7)
                 or (
-                    _
-                    and es.isdigit()
-                    and ee.isdigit()
-                    and 0 <= int(es) <= 7
-                    and 0 <= int(ee) <= 7
+                        _
+                        and es.isdigit()
+                        and ee.isdigit()
+                        and 0 <= int(es) <= 7
+                        and 0 <= int(ee) <= 7
                 ),
                 "last <day> specifier must include a day number or range in the 'weekday' field, you entered %r",
                 entry,
@@ -388,14 +388,14 @@ class CronTab(object):
         return self.matchers[index](attr, dt)
 
     def next(
-        self, now=None, increments=_increments, delta=True, default_utc=WARN_CHANGE
+            self, now=None, increments=_increments, delta=True, default_utc=WARN_CHANGE
     ):
         """
         How long to wait in seconds before this crontab entry can next be
         executed.
         """
         if default_utc is WARN_CHANGE and (
-            isinstance(now, _number_types) or (now and not now.tzinfo)
+                isinstance(now, _number_types) or (now and not now.tzinfo)
         ):
             warnings.warn(WARNING_CHANGE_MESSAGE, FutureWarning, 2)
             default_utc = False

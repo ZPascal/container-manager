@@ -15,7 +15,7 @@ def _extract_crontab_path() -> str:
 
 sys.path.insert(0, _extract_crontab_path())
 
-from files.image.cron import cron  # noqa: F402
+from files.image.cron import cron  # noqa: E402
 
 
 class CronTestCase(TestCase):

@@ -87,7 +87,7 @@ def restore_data(backup_file: str):
         )
 
         utils.write_log(
-            "info", os.path.basename(__file__), f"Running restore scripts ..."
+            "info", os.path.basename(__file__), "Running restore scripts ..."
         )
 
         restore_scripts = sorted(

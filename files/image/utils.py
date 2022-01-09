@@ -15,11 +15,11 @@ def write_log(log_level: str, logger: str, message: str):
     logger = f"\033[1;37m{logger}\033[0m"
 
     if log_level.lower() == "error":
-        log_level = f"\033[1;31mERROR\033[0m"
+        log_level = "\033[1;31mERROR\033[0m"
     elif log_level.lower() == "warn":
-        log_level = f"\033[1;33mWARN\033[0m"
+        log_level = "\033[1;33mWARN\033[0m"
     elif log_level.lower() == "info":
-        log_level = f"\033[1;32mINFO\033[0m"
+        log_level = "\033[1;32mINFO\033[0m"
     else:
         log_level = f"\033[1;37m{log_level}\033[0m"
 
