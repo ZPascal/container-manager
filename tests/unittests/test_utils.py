@@ -140,18 +140,6 @@ class UtilsTestCase(TestCase):
                 ]
             ),
         )
-        self.assertEqual(
-            544,
-            int(
-                str(
-                    oct(
-                        os.stat(
-                            f"{destination_test_folder}{os.sep}test{os.sep}test.py"
-                        ).st_mode
-                    )
-                )[-3:]
-            ),
-        )
 
         os.chmod(destination_test_folder, 0o755)
         utils.set_permissions_recursive(destination_test_folder, 0o755)

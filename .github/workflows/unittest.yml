@@ -23,6 +23,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: x64
 
+      - name: Install the requirements
+        run: pip install -r requirements.txt
+
       - name: Execute the unittests
         run: python3 -m unittest discover tests/unittests
 
@@ -40,6 +43,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
+
+      - name: Install the requirements
+        run: pip install -r requirements.txt
 
       - name: Execute the linting checks
         uses: reviewdog/action-flake8@v3.2.0

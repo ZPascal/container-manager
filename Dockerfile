@@ -63,6 +63,7 @@ RUN addgroup -S -g 500 kubernetes && \
     echo "@edge-community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     apk --no-cache upgrade && \
     apk --no-cache add supervisor filebeat@edge-testing tzdata logrotate rsync curl py3-pip && \
+    pip install crontab && \
     chown -R kubernetes:kubernetes $IMAGE_BASE_DIR && \
     find $IMAGE_BASE_DIR -name "*.py" -exec chmod +x "{}" ';' && \
     chmod +x /run.py && \
