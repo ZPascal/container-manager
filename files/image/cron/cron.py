@@ -13,6 +13,12 @@ import os
 
 
 def _parse_crontab(crontab_file: str) -> list:
+    """The method includes a functionality to parse the crontab file, and it returns a list of CronTab jobs
+
+    Keyword arguments:
+    crontab_file -> Specify the inserted crontab file
+    """
+
     logger = logging.getLogger("parser")
 
     logger.info(f"Reading crontab from {crontab_file}")
@@ -69,6 +75,12 @@ def _parse_crontab(crontab_file: str) -> list:
 
 
 def _get_next_executions(jobs: list):
+    """The method includes a functionality to extract the execution time and job itself from the submitted job list
+
+    Keyword arguments:
+    jobs -> Specify the inserted list of jobs
+    """
+
     logger = logging.getLogger("next-exec")
 
     scheduled_executions: tuple = tuple(
@@ -91,6 +103,13 @@ def _get_next_executions(jobs: list):
 
 
 def _loop(jobs: list, test_mode: bool = False):
+    """The method includes a functionality to loop over all jobs inside the crontab file and execute them
+
+    Keyword arguments:
+    jobs -> Specify the inserted jobs as list
+    test_mode -> Specify if you want to use the test mode or not (default False)
+    """
+
     logger = logging.getLogger("loop")
 
     logger.info("Entering main loop")
@@ -126,6 +145,12 @@ def _loop(jobs: list, test_mode: bool = False):
 
 
 def _execute_command(command: str):
+    """The method includes a functionality to execute a crontab command
+
+    Keyword arguments:
+    command -> Specify the inserted command for the execution
+    """
+
     logger = logging.getLogger("exec")
 
     logger.info(f"Executing command {command}")
@@ -139,12 +164,22 @@ def _execute_command(command: str):
 
 
 def _signal_handler():
+    """The method includes a functionality for the signal handler to exit a process"""
+
     logger = logging.getLogger("signal")
     logger.info("Exiting")
     sys.exit(0)
 
 
 def main():
+    """The method includes a functionality to control and execute crontab entries
+
+    Arguments:
+    -c -> Specify the inserted crontab file
+    -L -> Specify the inserted log file
+    -C -> Specify the if the output should be forwarded to the console
+    -l -> Specify the log level
+    """
     signal.signal(signal.SIGINT, _signal_handler)
     signal.signal(signal.SIGTERM, _signal_handler)
 

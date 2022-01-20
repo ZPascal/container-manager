@@ -16,11 +16,14 @@ spec = importlib.util.spec_from_file_location(
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
-# TODO Add doc strings
 
-
-# Restore the data and unpack archive file
 def restore_data(backup_file: str):
+    """The method includes a functionality to restore the backup data and unpack the archive file
+
+    Keyword arguments:
+    backup_file -> Specify the backup archive file
+    """
+
     if backup_file == "":
         utils.write_log(
             "error",

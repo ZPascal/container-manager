@@ -6,11 +6,17 @@ import subprocess
 import sys
 import re
 
-# TODO Add doc strings
 
-
-# Central logger
 def write_log(log_level: str, logger: str, message: str):
+    """The method includes a functionality to write centralized log message to the terminal. It also added a timestamp \
+    to the output
+
+    Keyword arguments:
+    log_level -> Specifies the log level e.g. ERROR of the output message
+    logger -> Specifies the logger name of the output message
+    message -> Specifies the log message
+    """
+
     time_stamp = datetime.datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S")
     logger = f"\033[1;37m{logger}\033[0m"
 
@@ -26,14 +32,17 @@ def write_log(log_level: str, logger: str, message: str):
     print(f"{time_stamp}\t{log_level}\t{logger} {message}")
 
 
-# Format the code, if there's any special log out e.g. exceptions inside the output stream
 def _log_preparation(result_str: str, script: str):
+    """The method includes a functionality to prepare the log output and remove predefined characters from the input \
+    string. The functionality also iterate over line breaks and reformat the output
+
+    Keyword arguments:
+    result_str -> Specifies the input message
+    script -> Specifies the executed script
+    """
+
     result_str_prep: list = (
-        result_str.replace("\\'", '"')
-        .replace("'", "")
-        .replace('"', "")
-        .replace("\t", "")
-        .split("\\n")
+        result_str.replace("\\'", '"').replace("'", "").replace('"', "").replace("\t", "").split("\\n")
     )
 
     for j in range(0, len(result_str_prep)):
@@ -46,8 +55,13 @@ def _log_preparation(result_str: str, script: str):
             )
 
 
-# Check if process is running
 def is_process_running(process_name: str) -> bool:
+    """The method includes a functionality to check if a process is running or not
+
+    Keyword arguments:
+    process_name -> Specify the process name
+    """
+
     command: str = f"ps | grep -v grep | grep {process_name}"
     result_stdout, result_stderr = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
@@ -59,8 +73,13 @@ def is_process_running(process_name: str) -> bool:
     return True
 
 
-# Check if supervisord process running
 def is_supervisor_process_running(process_name: str) -> bool:
+    """The method includes a functionality to check if a supervisord process is running or not
+
+    Keyword arguments:
+    process_name -> Specify the process name
+    """
+
     result = False
 
     f = open(f"/tmp/supervisor.{process_name}.state", "r")
@@ -73,15 +92,21 @@ def is_supervisor_process_running(process_name: str) -> bool:
     return result
 
 
-# Check if backup is actual running
 def is_backup_running() -> bool:
+    """The method includes a functionality to check if a backup process is running or not"""
+
     result: bool = is_process_running("{backup.py}")
 
     return result
 
 
-# Restart the process/ program
 def restart_process(process_name: str):
+    """The method includes a functionality to restart a supervisord process
+
+    Keyword arguments:
+    process_name -> Specify the process name
+    """
+
     if len(process_name) != 0:
         command = [
             "supervisorctl",
@@ -109,8 +134,13 @@ def restart_process(process_name: str):
         return "error"
 
 
-# Get the env variable by name
 def get_env_variable(variable: str) -> str:
+    """The method includes a functionality to get an environment variable
+
+    Keyword arguments:
+    variable -> Specify the name of environment variable
+    """
+
     result = os.environ.get(variable)
 
     if result == "" or result is None:
@@ -119,8 +149,14 @@ def get_env_variable(variable: str) -> str:
         return result
 
 
-# Execute a list of scripts and check if file permission is correct
 def execute_scripts(scripts: list, temp_dir_path: str = ""):
+    """The method includes a functionality execute a list of scripts and check if the file permission is correct
+
+    Keyword arguments:
+    scripts -> Specify the inserted list of scripts
+    temp_dir_path -> Specify an optional temporary directory
+    """
+
     for script in scripts:
         oct_perm: str = str(oct(os.stat(script).st_mode))[-3:]
         if int(oct_perm) >= 544:
@@ -150,10 +186,7 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
                             write_log(
                                 "info",
                                 script.split(os.sep)[-1],
-                                result_str_prep[i]
-                                .replace("b'", "")
-                                .replace("b", "")
-                                .replace('"', ""),
+                                result_str_prep[i].replace("b'", "").replace("b", "").replace('"', ""),
                             )
             elif "Traceback" in result_str:
                 _log_preparation(result_str, script)
@@ -167,8 +200,14 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
             sys.exit(1)
 
 
-# Sets the permissions recursive
 def set_permissions_recursive(path: str, mode: int):
+    """The method includes a functionality to sets the permissions recursive for a folder path
+
+    Keyword arguments:
+    path -> Specify the corresponding path as string
+    mode -> Specify the access mode as number
+    """
+
     root = None
     files = None
 
@@ -183,8 +222,10 @@ def set_permissions_recursive(path: str, mode: int):
                 os.chmod(file, mode)
 
 
-# Extract the dirs from the env file
 def extract_dir_env_vars() -> list:
+    """The method includes a functionality to extract all directory environment variables from the environment file \
+    and returned it as a list"""
+
     matched_values: list = list()
 
     file_read = open(f"{get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env", "r")
