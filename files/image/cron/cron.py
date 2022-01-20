@@ -9,8 +9,6 @@ import sys
 import signal
 import os
 
-# TODO Add doc strings
-
 
 def _parse_crontab(crontab_file: str) -> list:
     """The method includes a functionality to parse the crontab file, and it returns a list of CronTab jobs
