@@ -50,7 +50,7 @@ if os.path.exists(f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env"):
         sys.exit(1)
     else:
         cmd = (
-            f"/usr/bin/env | sed -e 's/=/=\"/' -e 's/$/\"/' | /usr/bin/sort | /bin/egrep -v "
+            "/usr/bin/env | sed -e 's/=/=\"/' -e 's/$/\"/' | /usr/bin/sort | /bin/egrep -v "
             "'HOSTNAME|SHLVL|HOME|TERM|PWD' > {utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env"
         )
         rs = subprocess.Popen(

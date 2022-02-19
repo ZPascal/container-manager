@@ -11,6 +11,12 @@ import os
 
 
 def _parse_crontab(crontab_file: str) -> list:
+    """The method includes a functionality to parse the crontab file, and it returns a list of CronTab jobs
+
+    Keyword arguments:
+    crontab_file -> Specify the inserted crontab file
+    """
+
     logger = logging.getLogger("parser")
 
     logger.info(f"Reading crontab from {crontab_file}")
@@ -67,6 +73,12 @@ def _parse_crontab(crontab_file: str) -> list:
 
 
 def _get_next_executions(jobs: list):
+    """The method includes a functionality to extract the execution time and job itself from the submitted job list
+
+    Keyword arguments:
+    jobs -> Specify the inserted list of jobs
+    """
+
     logger = logging.getLogger("next-exec")
 
     scheduled_executions: tuple = tuple(
@@ -88,12 +100,34 @@ def _get_next_executions(jobs: list):
     return next_exec_time, next_commands
 
 
-def _loop(jobs: list):
+def _loop(jobs: list, test_mode: bool = False):
+    """The method includes a functionality to loop over all jobs inside the crontab file and execute them
+
+    Keyword arguments:
+    jobs -> Specify the inserted jobs as list
+    test_mode -> Specify if you want to use the test mode or not (default False)
+    """
+
     logger = logging.getLogger("loop")
 
     logger.info("Entering main loop")
 
-    while True:
+    if test_mode is False:
+        while True:
+            sleep_time, commands = _get_next_executions(jobs)
+
+            logger.debug(f"Sleeping for {sleep_time} second(s)")
+
+            if sleep_time <= 1:
+                logger.debug("Sleep time <= 1 second, ignoring.")
+                time.sleep(1)
+                continue
+
+            time.sleep(sleep_time)
+
+            for command in commands:
+                _execute_command(command)
+    else:
         sleep_time, commands = _get_next_executions(jobs)
 
         logger.debug(f"Sleeping for {sleep_time} second(s)")
@@ -101,7 +135,6 @@ def _loop(jobs: list):
         if sleep_time <= 1:
             logger.debug("Sleep time <= 1 second, ignoring.")
             time.sleep(1)
-            continue
 
         time.sleep(sleep_time)
 
@@ -110,6 +143,12 @@ def _loop(jobs: list):
 
 
 def _execute_command(command: str):
+    """The method includes a functionality to execute a crontab command
+
+    Keyword arguments:
+    command -> Specify the inserted command for the execution
+    """
+
     logger = logging.getLogger("exec")
 
     logger.info(f"Executing command {command}")
@@ -117,17 +156,28 @@ def _execute_command(command: str):
     result = subprocess.run(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
     )
+
     logger.info(f"Standard output: {result.stdout}")
     logger.info(f"Standard error: {result.stderr}")
 
 
 def _signal_handler():
+    """The method includes a functionality for the signal handler to exit a process"""
+
     logger = logging.getLogger("signal")
     logger.info("Exiting")
     sys.exit(0)
 
 
 def main():
+    """The method includes a functionality to control and execute crontab entries
+
+    Arguments:
+    -c -> Specify the inserted crontab file
+    -L -> Specify the inserted log file
+    -C -> Specify the if the output should be forwarded to the console
+    -l -> Specify the log level
+    """
     signal.signal(signal.SIGINT, _signal_handler)
     signal.signal(signal.SIGTERM, _signal_handler)
 

@@ -30,7 +30,7 @@ if liveness_check_enabled:
 
     for script in image_health_liveness_scripts:
         oct_perm = str(oct(os.stat(script).st_mode))[-3:]
-        if int(oct_perm) >= 444:
+        if int(oct_perm) >= 544:
             utils.write_log(
                 "info",
                 os.path.basename(__file__),
@@ -41,7 +41,7 @@ if liveness_check_enabled:
                 command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
             )
 
-            result_str = result.stdout.decode("utf-8")
+            result_str: str = result.stdout.decode("utf-8")
             if ";" in result_str:
                 for i in result_str.split(";"):
                     if i != "'":
@@ -61,7 +61,7 @@ if liveness_check_enabled:
             utils.write_log(
                 "error",
                 os.path.basename(__file__),
-                f"Wrong permissions. Please, upgrade the permissions higher than oct 444: {script}",
+                f"Wrong permissions. Please, upgrade the permissions higher than oct 544: {script}",
             )
 
     if result_str == "ok":
