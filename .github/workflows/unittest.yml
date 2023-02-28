@@ -15,7 +15,7 @@ jobs:
         python-version: [ '3.x' ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -36,7 +36,7 @@ jobs:
         python-version: [ '3.x' ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -48,7 +48,9 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Execute the linting checks
-        uses: reviewdog/action-flake8@v3.2.0
+        uses: reviewdog/action-flake8@v3.6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           flake8_args: --config=.flake8
+          workdir: files
+          fail_on_error: true
