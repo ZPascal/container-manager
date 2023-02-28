@@ -20,7 +20,7 @@ if (
     sys.stdout.write("Redis host specified - enabling filebeat;")
 
     cmd = (
-        f"sed -i 's/autostart = .*/autostart = true/g' "
+        "sed -i 's/autostart = .*/autostart = true/g' "
         f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}01-filebeat.conf"
     )
     ps = subprocess.Popen(
@@ -29,7 +29,7 @@ if (
 
     if ps.returncode is not None:
         sys.stderr.write(
-            f"Error, can't update the "
+            "Error, can't update the "
             f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}01-filebeat.conf;"
         )
         sys.exit(1)
@@ -37,7 +37,7 @@ else:
     sys.stdout.write("Redis host not specified - disabling filebeat;")
 
     cmd = (
-        f"sed -i 's/autostart = .*/autostart = false/g' "
+        "sed -i 's/autostart = .*/autostart = false/g' "
         f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}01-filebeat.conf"
     )
     ps = subprocess.Popen(
@@ -46,7 +46,7 @@ else:
 
     if ps.returncode is not None:
         sys.stderr.write(
-            f"Error, can't update the "
+            "Error, can't update the "
             f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}01-filebeat.conf;"
         )
         sys.exit(1)

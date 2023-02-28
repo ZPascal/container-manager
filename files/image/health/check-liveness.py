@@ -68,5 +68,7 @@ if liveness_check_enabled:
         utils.write_log("info", os.path.basename(__file__), "Container is working.")
         sys.exit(0)
     else:
-        utils.write_log("error", os.path.basename(__file__), "Container is NOT working!")
+        utils.write_log(
+            "error", os.path.basename(__file__), "Container is NOT working!"
+        )
         sys.exit(1)

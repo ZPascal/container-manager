@@ -17,7 +17,7 @@ if int(utils.get_env_variable("IMAGE_CRON_ENABLED")) == 1:
     sys.stdout.write("Cron enabled, setting up autostart for supervisor service;")
 
     cmd = (
-        f"sed -i 's/autostart = .*/autostart = true/g' "
+        "sed -i 's/autostart = .*/autostart = true/g' "
         f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}00-crond.conf"
     )
     ps = subprocess.Popen(
@@ -26,7 +26,7 @@ if int(utils.get_env_variable("IMAGE_CRON_ENABLED")) == 1:
 
     if ps.returncode is not None:
         sys.stderr.write(
-            f"Error, can't update the "
+            "Error, can't update the "
             f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}00-crond.conf;"
         )
         sys.exit(1)
@@ -34,7 +34,7 @@ else:
     sys.stdout.write("Cron disabled;")
 
     cmd = (
-        f"sed -i 's/autostart = .*/autostart = false/g' "
+        "sed -i 's/autostart = .*/autostart = false/g' "
         f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}00-crond.conf"
     )
     ps = subprocess.Popen(
@@ -43,7 +43,7 @@ else:
 
     if ps.returncode is not None:
         sys.stderr.write(
-            f"Error, can't update the "
+            "Error, can't update the "
             f"{utils.get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}conf.d{os.sep}00-crond.conf;"
         )
         sys.exit(1)

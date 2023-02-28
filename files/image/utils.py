@@ -42,7 +42,11 @@ def _log_preparation(result_str: str, script: str):
     """
 
     result_str_prep: list = (
-        result_str.replace("\\'", '"').replace("'", "").replace('"', "").replace("\t", "").split("\\n")
+        result_str.replace("\\'", '"')
+        .replace("'", "")
+        .replace('"', "")
+        .replace("\t", "")
+        .split("\\n")
     )
 
     for j in range(0, len(result_str_prep)):
@@ -186,7 +190,10 @@ def execute_scripts(scripts: list, temp_dir_path: str = ""):
                             write_log(
                                 "info",
                                 script.split(os.sep)[-1],
-                                result_str_prep[i].replace("b'", "").replace("b", "").replace('"', ""),
+                                result_str_prep[i]
+                                .replace("b'", "")
+                                .replace("b", "")
+                                .replace('"', ""),
                             )
             elif "Traceback" in result_str:
                 _log_preparation(result_str, script)

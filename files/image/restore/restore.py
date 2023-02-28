@@ -44,7 +44,8 @@ def restore_data(backup_file: str):
 
         if (
             utils.get_env_variable("IMAGE_RESTORE_SCRIPTS_DIR") == ""
-            or os.path.exists(utils.get_env_variable("IMAGE_RESTORE_SCRIPTS_DIR")) is False
+            or os.path.exists(utils.get_env_variable("IMAGE_RESTORE_SCRIPTS_DIR"))
+            is False
         ):
             utils.write_log(
                 "error",

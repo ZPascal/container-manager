@@ -13,8 +13,8 @@ spec.loader.exec_module(utils)
 
 # Set health crontab entries
 if (
-        len(utils.get_env_variable("IMAGE_HEALTH_LIVENESS_CHECK_ENABLED")) != 0
-        and len(utils.get_env_variable("IMAGE_HEALTH_READINESS_FORCE_REBOOT")) != 0
+    len(utils.get_env_variable("IMAGE_HEALTH_LIVENESS_CHECK_ENABLED")) != 0
+    and len(utils.get_env_variable("IMAGE_HEALTH_READINESS_FORCE_REBOOT")) != 0
 ):
     f = open(f"{utils.get_env_variable('IMAGE_CRON_DIR')}{os.sep}kubernetes", "a")
     f.write(
