@@ -25,9 +25,8 @@ def _parse_crontab(crontab_file: str) -> list:
         logger.error(f"Crontab {crontab_file} does not exist. Exiting!")
         sys.exit(1)
 
-    crontab = open(crontab_file, "r")
-    lines: list = crontab.readlines()
-    crontab.close()
+    with open(crontab_file, "r") as crontab:
+        lines: list = crontab.readlines()
 
     logger.info(f"{len(lines)} lines read from crontab {crontab_file}")
 

@@ -19,13 +19,12 @@ if int(utils.get_env_variable("IMAGE_BACKUP_ENABLED")) == 1:
 
     sys.stdout.write("Backup enabled, creating crontab entry for backup;")
 
-    f = open(f"{utils.get_env_variable('IMAGE_CRON_DIR')}{os.sep}kubernetes", "w")
-    f.write(
-        f"{utils.get_env_variable('IMAGE_BACKUP_CRON')} "
-        f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env; "
-        f"{utils.get_env_variable('IMAGE_BACKUP_DIR')}{os.sep}backup.py 2>&1 "
-        f">{utils.get_env_variable('IMAGE_BACKUP_LOG')}\n"
-    )
-    f.close()
+    with open(f"{utils.get_env_variable('IMAGE_CRON_DIR')}{os.sep}kubernetes", "w") as f:
+        f.write(
+            f"{utils.get_env_variable('IMAGE_BACKUP_CRON')} "
+            f"{utils.get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env; "
+            f"{utils.get_env_variable('IMAGE_BACKUP_DIR')}{os.sep}backup.py 2>&1 "
+            f">{utils.get_env_variable('IMAGE_BACKUP_LOG')}\n"
+        )
 else:
     sys.stdout.write("Backup disabled;")

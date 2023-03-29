@@ -66,9 +66,8 @@ if os.path.isfile(image_setup_run_once_marker_file) is False:
     )
     utils.execute_scripts(run_once_scripts)
 
-    f = open(image_setup_run_once_marker_file, "w")
-    f.write(datetime.datetime.now().astimezone().strftime("%a %d. %b %H:%M:%S %Z %Y"))
-    f.close()
+    with open(image_setup_run_once_marker_file, "w") as f:
+        f.write(datetime.datetime.now().astimezone().strftime("%a %d. %b %H:%M:%S %Z %Y"))
 
     utils.write_log("info", os.path.basename(__file__), "[done]")
 

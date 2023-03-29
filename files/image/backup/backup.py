@@ -83,11 +83,10 @@ utils.write_log(
 )
 
 # Create a backup tar
-tar = tarfile.open(
+with tarfile.open(
     f"{utils.get_env_variable('STORAGE_BACKUP_DIR')}{os.sep}{backup_file_name}", "w:gz"
-)
-tar.add(backup_temp_dir.split(os.sep)[-1], path=temp_dir)
-tar.close()
+) as tar:
+    tar.add(backup_temp_dir.split(os.sep)[-1], arcname=temp_dir)
 
 utils.write_log("info", os.path.basename(__file__), "Preparing for backup rotation")
 
