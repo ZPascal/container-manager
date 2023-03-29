@@ -12,9 +12,8 @@ def _write_file(filename: str, content: str):
     content ->  Specify the content as string
     """
 
-    f = open(filename, "w")
-    f.write(content)
-    f.close()
+    with open(filename, "w") as f:
+        f.write(content)
 
 
 def _write_pid_file(pid_dir: str, process: str, pid: int):

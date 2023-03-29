@@ -77,10 +77,9 @@ def restore_data(backup_file: str):
             os.path.basename(__file__),
             f"Extracting backup archive {backup_file} at {restore_timestamp}",
         )
-        tar = tarfile.open(backup_file, "r:tar.gz")
-        for tarinfo in tar:
-            tar.extract(tarinfo, temp_dir)
-        tar.close()
+        with tarfile.open(backup_file, "r:tar.gz") as tar:
+            for tarinfo in tar:
+                tar.extract(tarinfo, temp_dir)
 
         restore_temp_dir = os.listdir(temp_dir)
 

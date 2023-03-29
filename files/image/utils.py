@@ -86,12 +86,9 @@ def is_supervisor_process_running(process_name: str) -> bool:
 
     result = False
 
-    f = open(f"/tmp/supervisor.{process_name}.state", "r")
-
-    if f.readline() == "RUNNING":
-        result = True
-
-    f.close()
+    with open(f"/tmp/supervisor.{process_name}.state", "r") as f:
+        if f.readline() == "RUNNING":
+            result = True
 
     return result
 
@@ -235,14 +232,13 @@ def extract_dir_env_vars() -> list:
 
     matched_values: list = list()
 
-    file_read = open(f"{get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env", "r")
-    lines_read = file_read.readlines()
+    with open(f"{get_env_variable('IMAGE_CONFIG_DIR')}{os.sep}env", "r") as file_read:
+        lines_read = file_read.readlines()
+
     pattern = "_DIR="
 
     for line_local in lines_read:
         if re.search(pattern, line_local):
             matched_values.append(line_local)
-
-    file_read.close()
 
     return matched_values
