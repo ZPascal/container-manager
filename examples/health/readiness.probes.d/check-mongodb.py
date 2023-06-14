@@ -11,9 +11,10 @@ spec = importlib.util.spec_from_file_location(
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
 
-result_local = utils.is_supervisor_process_running("app")
+result_local: int = 0
+is_process_running: bool = utils.is_supervisor_process_running("app")
 
-if result_local == 0:
+if is_process_running is True:
     sys.stdout.write("Trying to call main page at localhost:27017/test;")
 
     command = ["echo", "db.runCommand('ping').ok", "|", "mongo", "localhost:27017/test"]
@@ -26,7 +27,7 @@ if result_local == 0:
         if bool(utils.get_env_variable("IMAGE_HEALTH_LIVENESS_FORCE_REBOOT")):
             response = utils.restart_process("app")
 
-            if response is not None:
+            if response is not True:
                 result_local = 1
         else:
             result_local = 1
@@ -39,7 +40,7 @@ if result_local == 0:
             if bool(utils.get_env_variable("IMAGE_HEALTH_LIVENESS_FORCE_REBOOT")):
                 response = utils.restart_process("app")
 
-                if response is not None:
+                if response is not True:
                     result_local = 1
             else:
                 result_local = 1

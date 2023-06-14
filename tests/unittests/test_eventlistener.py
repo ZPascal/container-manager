@@ -5,7 +5,7 @@ import shutil
 from unittest import TestCase
 from unittest.mock import MagicMock, patch, mock_open
 
-from files.image.supervisor import eventlistener
+from files.image.supervisord import eventlistener
 
 
 class EventListenerTestCase(TestCase):

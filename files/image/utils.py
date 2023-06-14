@@ -4,7 +4,10 @@ import datetime
 import os
 import subprocess
 import sys
+import time
 import re
+import supervisor.xmlrpc
+import xmlrpc.client
 
 
 def write_log(log_level: str, logger: str, message: str):
@@ -101,31 +104,59 @@ def is_backup_running() -> bool:
     return result
 
 
-def restart_process(process_name: str):
+def restart_process(process_name: str, wait_seconds: int = 10):
     """The method includes a functionality to restart a supervisord process
 
     Keyword arguments:
     process_name -> Specify the process name
+    wait_seconds -> Specify the optional waiting seconds
     """
 
     if len(process_name) != 0:
-        command = [
-            "supervisorctl",
-            "-s",
-            "unix:///tmp/supervisord.sock",
-            "-c",
-            f"{get_env_variable('IMAGE_SUPERVISOR_DIR')}{os.sep}global.conf",
-            "restart",
-            process_name,
-        ]
-        result = subprocess.run(
-            command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
+        write_log(
+            "info",
+            os.path.basename(__file__),
+            "Create a new XMLRPC client",
+        )
+        client = xmlrpc.client.ServerProxy(
+            "http://127.0.0.1", transport=supervisor.xmlrpc.SupervisorTransport(
+                None, None, "unix:///tmp/supervisord.sock"
+            ),
         )
 
-        if result.returncode != 0:
-            return result.stdout
+        write_log(
+            "info",
+            os.path.basename(__file__),
+            f"Stop the {process_name} via XMLRPC",
+        )
+        try:
+            client.supervisor.stopProcess(process_name, True)
+        except supervisor.xmlrpc.RPCError:
+            return None
 
-        return None
+        write_log(
+            "info",
+            os.path.basename(__file__),
+            f"Wait {wait_seconds} seconds",
+        )
+        time.sleep(wait_seconds)
+
+        write_log(
+            "info",
+            os.path.basename(__file__),
+            f"Start the {process_name} via XMLRPC",
+        )
+        try:
+            result = client.supervisor.startProcess(process_name, True)
+        except supervisor.xmlrpc.RPCError:
+            return None
+
+        write_log(
+            "info",
+            os.path.basename(__file__),
+            f"You restarted the process {process_name} via XMLRPC. Result of the restart process: {result}",
+        )
+        return result
     else:
         write_log(
             "error",

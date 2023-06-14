@@ -26,7 +26,7 @@ image_setup_run_once_marker_file = (
     f"{utils.get_env_variable('STORAGE_BASE_DIR')}/.run-once.completed"
 )
 image_base_dir = utils.get_env_variable("IMAGE_BASE_DIR")
-image_supervisor_config = f"{image_base_dir}/supervisor/global.conf"
+image_supervisor_config = f"{image_base_dir}/supervisord/global.conf"
 
 # Executing run always scripts
 utils.write_log("info", os.path.basename(__file__), "Executing RUN ALWAYS setup ...")
