@@ -2,8 +2,9 @@ import io
 import os
 import shutil
 import tempfile
+from supervisor.xmlrpc import RPCError
 from unittest import TestCase, main
-from unittest.mock import MagicMock, patch, call, mock_open
+from unittest.mock import MagicMock, patch, call, mock_open, Mock
 
 from utils import Utils
 from files.image import utils
@@ -66,17 +67,43 @@ class UtilsTestCase(TestCase):
     def test_restart_process_empty_process_name(self):
         self.assertEqual("error", utils.restart_process(""))
 
-    @patch("subprocess.run")
-    def test_restart_process_valid_process_error(self, subprocess_run_mock):
-        subprocess_run_mock.return_value.stdout = "test"
-        result = utils.restart_process("test")
-        print(result)
-        self.assertEqual("test", result)
+    def test_restart_process_valid_process_wrong_process_name(self):
+        result = utils.restart_process("", 1)
+        self.assertEqual("error", result)
 
-    @patch("subprocess.run")
-    def test_restart_process_valid_process(self, subprocess_run_mock):
-        subprocess_run_mock.return_value.returncode = 0
-        self.assertEqual(None, utils.restart_process("test"))
+    @patch("xmlrpc.client.ServerProxy")
+    def test_restart_process_valid_process_error(self, xmlrpc_mock):
+        mock: Mock = Mock()
+        mock.supervisor.stopProcess = MagicMock()
+        mock.supervisor.startProcess = MagicMock(return_value=False)
+        xmlrpc_mock.return_value = mock
+        result = utils.restart_process("test", 1)
+        self.assertEqual(False, result)
+
+    @patch("xmlrpc.client.ServerProxy")
+    def test_restart_process_valid_process_stop_issue(self, xmlrpc_mock):
+        mock: Mock = Mock()
+        mock.supervisor.stopProcess = MagicMock(side_effect=RPCError("test"))
+        xmlrpc_mock.return_value = mock
+        result = utils.restart_process("test", 1)
+        self.assertEqual(None, result)
+
+    @patch("xmlrpc.client.ServerProxy")
+    def test_restart_process_valid_process_start_issue(self, xmlrpc_mock):
+        mock: Mock = Mock()
+        mock.supervisor.stopProcess = MagicMock()
+        mock.supervisor.startProcess = MagicMock(side_effect=RPCError("test"))
+        xmlrpc_mock.return_value = mock
+        result = utils.restart_process("test", 1)
+        self.assertEqual(None, result)
+
+    @patch("xmlrpc.client.ServerProxy")
+    def test_restart_process_valid_process(self, xmlrpc_mock):
+        mock: Mock = Mock()
+        mock.supervisor.stopProcess = MagicMock()
+        mock.supervisor.startProcess = MagicMock(return_value=True)
+        xmlrpc_mock.return_value = mock
+        self.assertEqual(True, utils.restart_process("test", 1))
 
     @patch.dict(os.environ, {"TEST": "test"})
     def test_get_env_variable(self):

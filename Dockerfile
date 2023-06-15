@@ -1,11 +1,13 @@
-FROM alpine:3.16
+FROM alpine:3.18
 MAINTAINER Pascal Zimmermann <ZPascal>
 
 LABEL application="Alpine Linux" \
       description="Base Linux Container Image for Kubernetes" \
-      version="3.16" \
+      version="3.18" \
       lastModifiedBy="Pascal Zimmermann" \
-      lastModifiedOn="2022-10-03"
+      lastModifiedOn="2023-06-14"
+
+ARG FILEBEAT_VERSION="8.8.1"
 
 ENV IMAGE_NAME="" \
     IMAGE_VERSION="" \
@@ -35,7 +37,7 @@ ENV IMAGE_NAME="" \
     IMAGE_SECRETS_DIR="/image/secrets" \
     IMAGE_SETUP_RUNALWAYS_DIR="/image/setup/run.always" \
     IMAGE_SETUP_RUNONCE_DIR="/image/setup/run.once" \
-    IMAGE_SUPERVISOR_DIR="/image/supervisor" \
+    IMAGE_SUPERVISOR_DIR="/image/supervisord" \
     APP_NAME="" \
     APP_VERSION="" \
     LOGGING_REDIS_HOST="" \
@@ -62,8 +64,13 @@ RUN addgroup -S -g 500 kubernetes && \
     echo "@edge-testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
     echo "@edge-community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     apk --no-cache upgrade && \
-    apk --no-cache add supervisor filebeat@edge-testing tzdata logrotate rsync curl py3-pip && \
-    pip install crontab && \
+    apk --no-cache add tzdata logrotate rsync curl py3-pip && \
+    wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz  && \
+    tar xzvf filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz && \
+    mv filebeat-${FILEBEAT_VERSION}-linux-x86_64/filebeat /usr/bin/filebeat && \
+    rm -rf filebeat-${FILEBEAT_VERSION}-linux-x86_64 && \
+    rm filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz && \
+    pip install crontab supervisor requests && \
     chown -R kubernetes:kubernetes $IMAGE_BASE_DIR && \
     find $IMAGE_BASE_DIR -name "*.py" -exec chmod +x "{}" ';' && \
     chmod +x /run.py && \
