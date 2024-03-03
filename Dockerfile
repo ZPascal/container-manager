@@ -1,13 +1,13 @@
-FROM alpine:3.18
+FROM alpine:3.19
 MAINTAINER Pascal Zimmermann <ZPascal>
 
 LABEL application="Alpine Linux" \
       description="Base Linux Container Image for Kubernetes" \
-      version="3.18" \
+      version="3.19" \
       lastModifiedBy="Pascal Zimmermann" \
-      lastModifiedOn="2023-06-14"
+      lastModifiedOn="2024-03-03"
 
-ARG FILEBEAT_VERSION="8.8.1"
+ARG FILEBEAT_VERSION="8.12.2"
 
 ENV IMAGE_NAME="" \
     IMAGE_VERSION="" \
@@ -70,6 +70,7 @@ RUN addgroup -S -g 500 kubernetes && \
     mv filebeat-${FILEBEAT_VERSION}-linux-x86_64/filebeat /usr/bin/filebeat && \
     rm -rf filebeat-${FILEBEAT_VERSION}-linux-x86_64 && \
     rm filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz && \
+    rm /usr/lib/python3.11/EXTERNALLY-MANAGED && \
     pip install crontab supervisor requests && \
     chown -R kubernetes:kubernetes $IMAGE_BASE_DIR && \
     find $IMAGE_BASE_DIR -name "*.py" -exec chmod +x "{}" ';' && \
