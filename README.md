@@ -37,7 +37,7 @@ Please copy the whole folder structure from the ```files``` directory to your sy
 
 ### Docker container
 
-Inside the Docker container, you can find the already copied directory structure and additionally, various configurations such as a dedicated user for the corresponding applications have already been created and all scripts have been made executable. Furthermore, the image can be used as a mother and by means of an inheritance with the corresponding children based on it. Thus, a later change of the user can be accomplished in the inheriting images (Add ```USER 500```to the corresponding Dockerfile). Another special feature is the already included integration of the corresponding Alpine repositories (Main, Testing, Community) and recursively revoking write permissions inside the complete newly embedded directory structure.
+Inside the Docker container, you can find the already copied directory structure and additionally, various configurations such as a dedicated user for the corresponding applications have already been created and all scripts have been made executable. Furthermore, the image can be used as a mother and an inheritance with the corresponding children based on it. Thus, a later change of the user can be accomplished in the inheriting images (Add ```USER 500``` to the corresponding Dockerfile). Another special feature is the already included integration of the corresponding Alpine repositories (Main, Testing, Community) and recursively revoking write permissions inside the complete newly embedded directory structure.
 
 #### Deployment of the container
 
@@ -65,39 +65,39 @@ The configuration files and corresponding initialization scripts of the correspo
 
 ### Cron
 
-Inside the cron directory the corresponding Python crontab implementation and a cron wrapper can be found. Furthermore, corresponding crontab entries such as the automatic execution of the backup job can be placed within the file ```kubernetes```. Please note the corresponding order of creation and have a look at the corresponding example [here](files/image/setup/run.always/01-configure-backup.py).
+Inside the cron directory, the corresponding Python crontab implementation and a cron wrapper can be found. Furthermore, corresponding crontab entries such as the automatic execution of the backup job can be placed within the file ```kubernetes```. Please note the corresponding order of creation and have a look at the corresponding example [here](files/image/setup/run.always/01-configure-backup.py).
 
 ### Health scripts
 
 #### Liveness
 
-The centrally implemented health liveness scripts and their extensions within the subfolder regularly check the current status of the corresponding process application and whether it is still active accordingly. The intensity of the check can be configured via the ```IMAGE_HEALTH_CRON``` environment variable and define the execution interval of the health checks. Normally the corresponding supervisor application manages the app, but it's also possible to enable the on top readiness checks via the ```IMAGE_HEALTH_LIVENESS_CHECK_ENABLED="true"``` env variable. The default value of that option is ```false```. If you enabled that opportunity on top of supervisor, it's possible to define a custom log file of the execution process of the cron job. You can define the ```IMAGE_HEALTH_LIVENESS_LOG``` env variable to set your favorite log file. To use that complete functionality it's necessary to enable and setting up the cron application (default setting).
+The centrally implemented health liveness scripts and their extensions within the subfolder regularly check the current status of the corresponding process application and whether it is still active accordingly. The intensity of the check can be configured via the ```IMAGE_HEALTH_CRON``` environment variable and define the execution interval of the health checks. Normally the corresponding supervisor application manages the app, but it's also possible to enable the on-top readiness checks via the ```IMAGE_HEALTH_LIVENESS_CHECK_ENABLED="true"``` env variable. The default value of that option is ```false```. If you enabled that opportunity on top of supervisor, it's possible to define a custom log file of the execution process of the cron job. You can define the ```IMAGE_HEALTH_LIVENESS_LOG``` env variable to set your favorite log file. To use that complete functionality it's necessary to enable and set up the cron application (default setting).
 
 #### Readiness
 
-Furthermore, in this context, the already implemented health readiness scripts are located in the same directory structure. These scripts can directly query the current status of the corresponding application by means of the extensions to be created within the subfolder and, for example, trigger an API call to a connected health interface. The intensity of the check can be also configured via the ```IMAGE_HEALTH_CRON``` environment variable and define the execution interval of booth health checks. It's only possible to define one value for both checks (if both enabled). Another configuration parameter is the env variable ```IMAGE_HEALTH_READINESS_FORCE_REBOOT="true"``` and it's define the reboot of the application if the health point not available. It's necessary to set the value to ```true``` or ```false```, the corresponding default value is ```true```. It's possible to define a custom log file of the execution process of the corresponding cron job. You can define the ```IMAGE_HEALTH_READINESS_LOG``` env variable to set your favorite log file. To use that complete functionality it's necessary to enable and setting up the cron application (default setting).
+Furthermore, in this context, the already implemented health readiness scripts are located in the same directory structure. These scripts can directly query the current status of the corresponding application using the extensions to be created within the subfolder and, for example, trigger an API call to a connected health interface. The intensity of the check can be also configured via the ```IMAGE_HEALTH_CRON``` environment variable and define the execution interval of booth health checks. It's only possible to define one value for both checks (if both are enabled). Another configuration parameter is the env variable ```IMAGE_HEALTH_READINESS_FORCE_REBOOT="true"``` and it defines the reboot of the application if the health point not available. It's necessary to set the value to ```true``` or ```false```, the corresponding default value is ```true```. It's possible to define a custom log file of the execution process of the corresponding cron job. You can define the ```IMAGE_HEALTH_READINESS_LOG``` env variable to set your favorite log file. To use that complete functionality it's necessary to enable and set up the cron application (default setting).
 
 ### Logging
 
-Within this folder the global settings of Filebeat and Logrotate can be adjusted. Furthermore, it is possible to override the global settings by configuration files (within the configuration files in the subfolder) and to integrate corresponding applications into the circuit of the two applications. A special feature in this context is the default configuration of Filebeat. Here the appropriate settings were selected in such a way that all logs within the Supervisor folder are passed on according to the configuration set before by the two mostly in the Deployment defined parameters(`LOGGING_REDIS_HOST` and `LOGGING_REDIS_PASSWORD`) centrally (The Redis scenario acts for this as cache).
+Within this folder, the global settings of Filebeat and Logrotate can be adjusted. Furthermore, it is possible to override the global settings by configuration files (within the configuration files in the subfolder) and to integrate corresponding applications into the circuit of the two applications. A special feature in this context is the default configuration of Filebeat. Here the appropriate settings were selected in such a way that all logs within the Supervisor folder are passed on according to the configuration set before by the two mostly in the Deployment defined parameters(`LOGGING_REDIS_HOST` and `LOGGING_REDIS_PASSWORD`) centrally (The Redis scenario acts for this as cache).
 
 ### Restore
 
-The restore folder structure contains the counterpart to the backup structure and can be equipped with own scripts inside the subfolder. These scripts can be used customize the restore process and to rebuild the saved files.
+The restore folder structure contains the counterpart to the backup structure and can be equipped with its own scripts inside the subfolder. These scripts can be used to customize the restore process and to rebuild the saved files.
 
 ### Secrets
 
-The secret folder has the purpose to store required secrets centrally.
+The secret folder has the purpose of storing required secrets centrally.
 
 ### Setup scripts
 
 #### Run always
 
-Within this folder scripts can be created, which are executed at a container start and which should carry out corresponding initializations or configurations within the container. Furthermore, the configuration of the backup cron job and logrotate are carried out by default. A further point is the backup, examination and embedding of the environment within the configuration folder. The integration of this created file within the backup and lograte cron entry is also done within this directory structure.
+Within this folder scripts can be created, which are executed at a container start and which should carry out corresponding initializations or configurations within the container. Furthermore, the configuration of the backup cron job and logrotate is carried out by default. A further point is the backup, examination, and embedding of the environment within the configuration folder. The integration of this created file within the backup and lograte cron entry is also done within this directory structure.
 
-#### Run once (normally on first container start)
+#### Run once (normally on the first container start)
 
-In this folder, scripts can be created which are to be executed once during a container start and which are to carry out corresponding initializations or configurations within the container. After the scripts have been executed, a corresponding shadow file is created and checked accordingly when the container is started again and in result the execution of the scripts is skipped.
+In this folder, scripts can be created which are to be executed once during a container start and which are to carry out corresponding initializations or configurations within the container. After the scripts have been executed, a corresponding shadow file is created and checked accordingly when the container is started again and as a result, the execution of the scripts is skipped.
 
 ### Supervisor
 
@@ -105,13 +105,13 @@ The supervisor daemon enables the central control and monitoring of the appropri
 
 ## Architecture overview & process flow
 
-The starting point of the overlay system is the file [run.py](files/run.py). Within this file all appropriate files are controlled and executed within subprocesses (apart from the supervisord process). In this context the file [utils.py](files/image/utils.py) represents a collection of centrally needed auxiliary methods, which can be used within all scripts after the appropriate integration. The process flow can be seen in the graphic below.
+The starting point of the overlay system is the file [run.py](files/run.py). Within this file, all appropriate files are controlled and executed within subprocesses (apart from the supervisord process). In this context, the file [utils.py](files/image/utils.py) represents a collection of centrally needed auxiliary methods, which can be used within all scripts after the appropriate integration. The process flow can be seen in the graphic below.
 
 ![process-container-manager](doc/images/process-container-manager.png)
 
 ## Examples
 
-Inside the [example](examples) folder you will find different configuration ideas and files from my productive containers. The configuration files should give you some ideas what is possible with this construction and can be completed by your suggestions. The structure inside this folder is the same as you can find inside the container.
+Inside the [example](examples) folder you will find different configuration ideas and files from my productive containers. The configuration files should give you some ideas of what is possible with this construction and can be completed by your suggestions. The structure inside this folder is the same as you can find inside the container.
 
 ## Contribution
 
@@ -123,7 +123,7 @@ If you need support, or you encounter a bug, please don't hesitate to open an is
 
 ## Donations
 
-If you would like to support my work, I ask you to take an unusual action inside the open source community. Donate the money to a non-profit organization like Doctors Without Borders or the Children's Cancer Aid. I will continue to build tools because I like it and it is my passion to develop and share applications.
+If you want to support my work, I ask you to take an unusual action inside the open source community. Donate the money to a non-profit organization like Doctors Without Borders or the Children's Cancer Aid. I will continue to build tools because I like them, and I am passionate about developing and sharing applications.
 
 ## License
 
