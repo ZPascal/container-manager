@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  test:
+  integrationtest:
     runs-on: ubuntu-latest
 
     steps:
