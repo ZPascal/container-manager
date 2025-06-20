@@ -1,14 +1,14 @@
-FROM alpine:3.21
+FROM alpine:3.22
 MAINTAINER Pascal Zimmermann <ZPascal>
 
 LABEL org.opencontainers.image.title="Alpine Linux" \
       org.opencontainers.image.description="Base Linux Container Image for Kubernetes" \
-      org.opencontainers.image.version="3.21" \
+      org.opencontainers.image.version="3.22" \
       org.opencontainers.image.authors="Pascal Zimmermann <pascal.zimmermann@theiotstudio.com>" \
       lastUpdatedBy="Pascal Zimmermann" \
-      lastUpdatedOn="2025-04-05"
+      lastUpdatedOn="2025-06-20"
 
-ARG FILEBEAT_VERSION="8.17.4"
+ARG FILEBEAT_VERSION="9.0.2"
 
 ENV IMAGE_NAME="" \
     IMAGE_VERSION="" \
