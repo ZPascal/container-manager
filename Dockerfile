@@ -6,9 +6,9 @@ LABEL org.opencontainers.image.title="Alpine Linux" \
       org.opencontainers.image.version="3.22" \
       org.opencontainers.image.authors="Pascal Zimmermann <pascal.zimmermann@theiotstudio.com>" \
       lastUpdatedBy="Pascal Zimmermann" \
-      lastUpdatedOn="2025-06-20"
+      lastUpdatedOn="2025-06-27"
 
-ARG FILEBEAT_VERSION="9.0.2"
+ARG FILEBEAT_VERSION="9.0.3"
 
 ENV IMAGE_NAME="" \
     IMAGE_VERSION="" \
